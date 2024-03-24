@@ -8,15 +8,13 @@ namespace RentRight.Utilities
     public class AuthService
     {
         private readonly RentRightContext _context;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(RentRightContext context, IHttpContextAccessor httpContextAccessor)
+        public AuthService(RentRightContext context)
         {
             _context = context;
-            _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<bool> AuthenticateUserAsync(string email, string password)
+        public async Task<bool> AuthenticateUserAsync(string email, string password, HttpContext httpContext)
         {
             var user = await _context.User.FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
             if (user != null)
@@ -30,7 +28,7 @@ namespace RentRight.Utilities
                 var identity = new ClaimsIdentity(claims, "MyCookieAuth");
                 var claimsPrincipal = new ClaimsPrincipal(identity);
 
-                await _httpContextAccessor.HttpContext.SignInAsync("MyCookieAuth", claimsPrincipal);
+                await httpContext.SignInAsync("MyCookieAuth", claimsPrincipal);
                 return true;
             }
             return false;

@@ -8,7 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<RentRightContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("RentRightContext") ?? throw new InvalidOperationException("Connection string 'RentRightContext' not found.")));
 builder.Services.AddScoped<AuthService>();
-builder.Services.AddHttpContextAccessor();
 
 
 // Authentication and Authorization configurations

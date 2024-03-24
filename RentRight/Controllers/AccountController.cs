@@ -40,7 +40,7 @@ namespace RentRight.Controllers
                 return View();
             }
 
-            var isAuthenticated = await _authService.AuthenticateUserAsync(email, password);
+            var isAuthenticated = await _authService.AuthenticateUserAsync(email, password, HttpContext);
 
             if (isAuthenticated)
             {
@@ -75,7 +75,7 @@ namespace RentRight.Controllers
             {
                 _context.Add(user);
                 await _context.SaveChangesAsync();
-                var isAuthenticated = await _authService.AuthenticateUserAsync(user.Email, user.Password);
+                var isAuthenticated = await _authService.AuthenticateUserAsync(user.Email, user.Password, HttpContext);
 
                 if (isAuthenticated)
                 {
@@ -99,6 +99,12 @@ namespace RentRight.Controllers
         public IActionResult AccessDenied()
         {
             return View();
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync("MyCookieAuth");
+            return RedirectToAction("Index", "Home");
         }
 
     }
