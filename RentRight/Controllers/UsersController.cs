@@ -11,6 +11,7 @@ using RentRight.Models;
 
 namespace RentRight.Controllers
 {
+    [Authorize]
     public class UsersController : Controller
     {
         private readonly RentRightContext _context;

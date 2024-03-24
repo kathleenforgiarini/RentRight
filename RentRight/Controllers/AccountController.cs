@@ -8,6 +8,7 @@ using RentRight.Models;
 using System.Security.Claims;
 using RentRight.Utilities;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RentRight.Controllers
 {
@@ -26,6 +27,10 @@ namespace RentRight.Controllers
         // GET: AccountController
         public IActionResult Login()
         {
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             ViewBag.ShowLoginForm = true;
             return View();
         }
@@ -96,11 +101,13 @@ namespace RentRight.Controllers
             }
         }
 
+        [Authorize]
         public IActionResult AccessDenied()
         {
             return View();
         }
 
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync("MyCookieAuth");
