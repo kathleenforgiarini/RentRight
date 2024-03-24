@@ -1,5 +1,4 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
-
+﻿
 * {
     margin: 0;
     padding: 0;
@@ -213,7 +212,3 @@ body {
     transform: translateX(200%);
 }
 
-.swal2-shown {
-    overflow: unset !important;
-    padding-right: 0px !important;
-}

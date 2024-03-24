@@ -17,6 +17,7 @@ namespace RentRight.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
             return View();
         }
 

@@ -39,3 +39,19 @@ $(".togglePasswordConfirmSignUp").on('click', function () {
 });
 
 
+if (!showLoginForm) {
+    $('#container').addClass("active");
+    $('.loginForm').hide();
+}
+
+
+if (errorMessage !== "") {
+    new Notify({
+        status: 'error',
+        title: errorMessage,
+        position: 'x-center',
+        effect: 'slide',
+        autotimeout: 5000,
+        speed: 200,
+    })
+}

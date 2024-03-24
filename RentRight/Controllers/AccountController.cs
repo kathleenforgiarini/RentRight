@@ -49,7 +49,7 @@ namespace RentRight.Controllers
 
             if (isAuthenticated)
             {
-                ViewBag.SuccessMessage = "Welcome!";
+                TempData["SuccessMessage"] = "Welcome!";
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -84,7 +84,7 @@ namespace RentRight.Controllers
 
                 if (isAuthenticated)
                 {
-                    ViewBag.SuccessMessage = "Welcome!";
+                    TempData["SuccessMessage"] = "Welcome!";
                     return RedirectToAction("Index", "Home");
                 }
                 else
