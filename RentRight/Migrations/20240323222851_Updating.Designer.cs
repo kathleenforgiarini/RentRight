@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RentRight.Data;
 
@@ -10,9 +11,11 @@ using RentRight.Data;
 namespace RentRight.Migrations
 {
     [DbContext(typeof(RentRightContext))]
-    partial class RentRightContextModelSnapshot : ModelSnapshot
+    [Migration("20240323222851_Updating")]
+    partial class Updating
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,7 +68,7 @@ namespace RentRight.Migrations
                             IsActive = true,
                             LastName = "Owner",
                             Password = "1234",
-                            Type = "owner"
+                            Type = ""
                         });
                 });
 #pragma warning restore 612, 618

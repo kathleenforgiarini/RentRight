@@ -15,5 +15,22 @@ namespace RentRight.Data
         }
 
         public DbSet<RentRight.Models.User> User { get; set; } = default!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = 1,
+                    FirstName = "Owner",
+                    LastName = "Owner",
+                    Email = "owner@owner.com",
+                    Password = "1234",
+                    Type = "owner",
+                    IsActive = true,
+                }
+                );
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

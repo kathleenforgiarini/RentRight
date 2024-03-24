@@ -1,4 +1,5 @@
-﻿@{
+﻿@model RentRight.Models.User
+@{
     Layout = null;
 }
 
@@ -15,27 +16,31 @@
     <link rel="stylesheet" href="~/RentRight.styles.css" asp-append-version="true" />
 </head>
 <body>
+    <div asp-validation-summary="All" class="text-danger"></div>
     <div class="container" id="container">
+
         <div class="form-container sign-up">
-            <form>
+            <form asp-action="SignUp" class="signUpForm">
                 <h1>Sign Up</h1>
-                <input type="text" placeholder="First Name">
-                <input type="text" placeholder="Last Name">
-                <input type="email" placeholder="Email">
-                <input type="password" id="passwordSignUp" placeholder="Password">
+                <input type="text" placeholder="First Name" asp-for="FirstName">
+                <input type="text" placeholder="Last Name" asp-for="LastName">
+                <input type="email" placeholder="Email" asp-for="Email">
+                <input type="password" id="passwordSignUp" placeholder="Password" asp-for="Password">
                 <i class="eyeSignUp fas fa-eye togglePasswordSignUp"></i>
-                <input type="password" id="passwordConfirmSignUp" placeholder="Confirm Password">
+                <input type="password" id="passwordConfirmSignUp" placeholder="Confirm Password" name="confirmPassword">
                 <i class="eyeSignUpConfirm fas fa-eye togglePasswordConfirmSignUp"></i>
-                <button>Sign Up</button>
+                <button type="submit">Sign Up</button>
             </form>
         </div>
+        
+
         <div class="form-container sign-in">
-            <form>
+            <form asp-action="Login" class="loginForm">
                 <h1>Log In</h1>
-                <input type="email" placeholder="Email">
-                <input type="password" id="password" placeholder="Password">
+                <input type="email" placeholder="Email" asp-for="Email">
+                <input type="password" id="password" placeholder="Password" asp-for="Password">
                 <i class="eye fas fa-eye togglePassword"></i>
-                <button>Log In</button>
+                <button type="submit">Log In</button>
             </form>
         </div>
         <div class="toggle-container">
@@ -59,5 +64,14 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/login.js" asp-append-version="true"></script>
+    <script>
+        var showLoginForm = @(ViewBag.ShowLoginForm ? "true" : "false");
+        if (!showLoginForm){
+            $('#container').addClass("active");
+            $('.loginForm').hide();
+        }
+        
+    </script>
+
 </body>
 </html>

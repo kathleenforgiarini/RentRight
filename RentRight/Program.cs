@@ -9,24 +9,26 @@ builder.Services.AddDbContext<RentRightContext>(options =>
 
 
 // Authentication and Authorization configurations
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
+builder.Services.AddAuthentication("MyCookieAuth").AddCookie("MyCookieAuth", 
+    options =>
     {
+        options.Cookie.Name = "MyCookieAuth";
         options.LoginPath = "/Account/Login";
         options.AccessDeniedPath = "/Account/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromHours(1);
     });
 
 
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("RequireOwnerRole", policy =>
-        policy.RequireClaim(ClaimTypes.Role, "owner"));
+        policy.RequireClaim("Type", "owner"));
 
     options.AddPolicy("RequireManagerRole", policy =>
-       policy.RequireClaim(ClaimTypes.Role, "manager"));
+       policy.RequireClaim("Type", "manager"));
 
     options.AddPolicy("RequireTenantRole", policy =>
-       policy.RequireClaim(ClaimTypes.Role, "tenant"));
+       policy.RequireClaim("Type", "tenant"));
 });
 
 
@@ -59,5 +61,7 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
 
 app.Run();

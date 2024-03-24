@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,12 +21,14 @@ namespace RentRight.Controllers
         }
 
         // GET: Users
+        [Authorize (Policy = "RequireOwnerRole")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.User.ToListAsync());
         }
 
         // GET: Users/Details/5
+        [Authorize(Policy = "RequireManagerRole")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)

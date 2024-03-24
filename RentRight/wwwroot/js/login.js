@@ -8,6 +8,8 @@ registerBtn.on("click", () => {
 
 loginBtn.on("click", () => {
     container.removeClass("active");
+    $('.loginForm').show();
+
 });
 
 $(".togglePassword").on('click', function () {
@@ -39,5 +41,4 @@ $(".togglePasswordConfirmSignUp").on('click', function () {
         input.attr("type", "password");
     }
 });
-
 
