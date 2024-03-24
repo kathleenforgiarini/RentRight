@@ -11,23 +11,22 @@
     <title>Login - RentRight</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="sweetalert2.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/RentRight.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <div asp-validation-summary="All" class="text-danger"></div>
     <div class="container" id="container">
-
         <div class="form-container sign-up">
             <form asp-action="SignUp" class="signUpForm">
                 <h1>Sign Up</h1>
-                <input type="text" placeholder="First Name" asp-for="FirstName">
-                <input type="text" placeholder="Last Name" asp-for="LastName">
-                <input type="email" placeholder="Email" asp-for="Email">
-                <input type="password" id="passwordSignUp" placeholder="Password" asp-for="Password">
+                <input type="text" placeholder="First Name" asp-for="FirstName" required>
+                <input type="text" placeholder="Last Name" asp-for="LastName" required>
+                <input type="email" placeholder="Email" asp-for="Email" required>
+                <input type="password" id="passwordSignUp" placeholder="Password" asp-for="Password" required>
                 <i class="eyeSignUp fas fa-eye togglePasswordSignUp"></i>
-                <input type="password" id="passwordConfirmSignUp" placeholder="Confirm Password" name="confirmPassword">
+                <input type="password" id="passwordConfirmSignUp" placeholder="Confirm Password" name="confirmPassword" required>
                 <i class="eyeSignUpConfirm fas fa-eye togglePasswordConfirmSignUp"></i>
                 <button type="submit">Sign Up</button>
             </form>
@@ -37,8 +36,8 @@
         <div class="form-container sign-in">
             <form asp-action="Login" class="loginForm">
                 <h1>Log In</h1>
-                <input type="email" placeholder="Email" asp-for="Email">
-                <input type="password" id="password" placeholder="Password" asp-for="Password">
+                <input type="email" placeholder="Email" asp-for="Email" required>
+                <input type="password" id="password" placeholder="Password" asp-for="Password" required>
                 <i class="eye fas fa-eye togglePassword"></i>
                 <button type="submit">Log In</button>
             </form>
@@ -59,19 +58,31 @@
         </div>
     </div>
 
-
+    
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/login.js" asp-append-version="true"></script>
+
     <script>
-        var showLoginForm = @(ViewBag.ShowLoginForm ? "true" : "false");
-        if (!showLoginForm){
+        let showLoginForm = @(ViewBag.ShowLoginForm ? "true" : "false");
+        let errorMessage = "@(ViewBag.ErrorMessage)";
+        if (!showLoginForm) {
             $('#container').addClass("active");
             $('.loginForm').hide();
         }
-        
-    </script>
+        console.log(errorMessage);
 
+        if (errorMessage !== "") {
+            Swal.fire({
+                scrollbarPadding: false,
+                heightAuto: false,
+                icon: "error",
+                title: "Oops...",
+                text: errorMessage,
+            });
+        }
+    </script>
 </body>
 </html>

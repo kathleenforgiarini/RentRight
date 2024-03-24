@@ -2,10 +2,13 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using RentRight.Data;
+using RentRight.Utilities;
 using System.Security.Claims;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<RentRightContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("RentRightContext") ?? throw new InvalidOperationException("Connection string 'RentRightContext' not found.")));
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddHttpContextAccessor();
 
 
 // Authentication and Authorization configurations

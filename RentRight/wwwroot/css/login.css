@@ -212,3 +212,8 @@ body {
 .container.active .toggle-right {
     transform: translateX(200%);
 }
+
+.swal2-shown {
+    overflow: unset !important;
+    padding-right: 0px !important;
+}

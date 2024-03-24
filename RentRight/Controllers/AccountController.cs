@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using RentRight.Data;
 using RentRight.Models;
 using System.Security.Claims;
+using RentRight.Utilities;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace RentRight.Controllers
 {
@@ -13,10 +15,12 @@ namespace RentRight.Controllers
     {
 
         private readonly RentRightContext _context;
+        private readonly AuthService _authService;
 
-        public AccountController(RentRightContext context)
+        public AccountController(RentRightContext context, AuthService authService)
         {
             _context = context;
+            _authService = authService;
         }
 
         // GET: AccountController
@@ -35,50 +39,61 @@ namespace RentRight.Controllers
                 ViewBag.ShowLoginForm = true;
                 return View();
             }
-            var authenticatedUser = await _context.User.FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
 
-            if (authenticatedUser != null)
+            var isAuthenticated = await _authService.AuthenticateUserAsync(email, password);
+
+            if (isAuthenticated)
             {
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, authenticatedUser.Email),
-                    new Claim("Type", authenticatedUser.Type),
-                };
-
-                var identity = new ClaimsIdentity(claims, "MyCookieAuth");
-                ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(identity);
-
-                await HttpContext.SignInAsync("MyCookieAuth", claimsPrincipal);
-
+                ViewBag.SuccessMessage = "Welcome!";
                 return RedirectToAction("Index", "Home");
             }
             else
             {
+                ViewBag.ErrorMessage = "Invalid Credentials";
+                ViewBag.ShowLoginForm = true;
                 return View();
-
             }
         }
 
         [HttpPost]
-        public IActionResult SignUp([Bind("FirstName,LastName,Email,Password")] User user, String? confirmPassword)
+        public async Task<IActionResult> SignUp([Bind("FirstName,LastName,Email,Password")] User user, String? confirmPassword)
         {
 
             if (!ModelState.IsValid)
             {
                 ViewBag.ShowLoginForm = false;
-                return View("Login", user);
+                return View("Login");
             }
 
             if (confirmPassword != user.Password)
             {
                 ViewBag.ShowLoginForm = false;
-                ModelState.AddModelError("", "Passwords do not match");
-                return View("Login", user);
-
+                ViewBag.ErrorMessage = "Passwords do not match!";
+                return View("Login");
             }
+            try
+            {
+                _context.Add(user);
+                await _context.SaveChangesAsync();
+                var isAuthenticated = await _authService.AuthenticateUserAsync(user.Email, user.Password);
 
-            ViewBag.ShowLoginForm = true;
-            return RedirectToAction("Index", "Home");
+                if (isAuthenticated)
+                {
+                    ViewBag.SuccessMessage = "Welcome!";
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = "An error occured. Try again!";
+                    ViewBag.ShowLoginForm = true;
+                    return View("Login");
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View("Login");
+            }
         }
 
         public IActionResult AccessDenied()
