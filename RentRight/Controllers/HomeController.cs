@@ -26,7 +26,7 @@ namespace RentRight.Controllers
             {
                 ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
                
-                return View();
+                return RedirectToAction("Index", "Properties");
             }
             return RedirectToAction("Login", "Account");          
         }

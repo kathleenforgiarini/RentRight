@@ -38,3 +38,8 @@ html {
 .nameUser {
     font-size: 22px;
 }
+
+.mainContent {
+    padding: 50px;
+    color: #444444;
+}

@@ -15,6 +15,7 @@ namespace RentRight.Data
         }
 
         public DbSet<RentRight.Models.User> User { get; set; } = default!;
+        public DbSet<RentRight.Models.Property> Property { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
