@@ -76,6 +76,15 @@ namespace RentRight.Controllers
                 ViewBag.ErrorMessage = "Passwords do not match!";
                 return View("Login");
             }
+
+            var existingUser = await _context.User.FirstOrDefaultAsync(u => u.Email == user.Email);
+            if (existingUser != null)
+            {
+                ViewBag.ShowLoginForm = false;
+                ViewBag.ErrorMessage = "This e-mail already exists.";
+                return View("Login");
+            }
+
             try
             {
                 _context.Add(user);

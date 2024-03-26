@@ -21,7 +21,8 @@ namespace RentRight.Utilities
             {
                 var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.Name, user.FirstName + " " + user.LastName),
+                new Claim(ClaimTypes.Role, user.Type),
                 new Claim("Type", user.Type),
             };
 
@@ -29,6 +30,7 @@ namespace RentRight.Utilities
                 var claimsPrincipal = new ClaimsPrincipal(identity);
 
                 await httpContext.SignInAsync("MyCookieAuth", claimsPrincipal);
+                
                 return true;
             }
             return false;

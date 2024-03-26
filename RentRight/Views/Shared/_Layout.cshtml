@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims;
+@{
+    var fullName = User.FindFirstValue(ClaimTypes.Name);
+    var type = User.FindFirstValue(ClaimTypes.Role);
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -12,44 +18,71 @@
     <link rel="stylesheet" href="~/RentRight.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">RentRight</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+    <div class="container-fluid overflow-hidden">
+        <div class="row vh-100 overflow-auto">
+            <div class="col-12 col-sm-3 col-xl-2 px-0 d-flex sticky-top text-white menubar">
+                <div class="d-flex flex-sm-column flex-row flex-grow-1 pt-2">
+
+                    <i class="px-3 fas fa-angle-left align-self-end fa-2x mt-2 backMenu"></i>
+                    <div class="mt-2">
+                        <p class="px-3 nameUser">@fullName</p>
+                         <hr />
+                    </div>
+                   
+                    <ul class="nav nav-pills px-3 flex-sm-column flex-row flex-nowrap flex-shrink-1 flex-sm-grow-0 flex-grow-1 mb-sm-auto mb-0 justify-content-center align-items-center align-items-sm-start" id="menu">
+                        <li class="nav-item mt-2">
+                            <a asp-controller="Home" asp-action="Index" class="nav-link px-sm-0 px-2 text-white text-decoration-none">
+                                <i class="fas fa-home"></i><span class="ms-3 d-none d-sm-inline">Home</span>
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <li class="nav-item mt-2">
+                            <a href="#" class="nav-link px-sm-0 px-2 text-white text-decoration-none">
+                                <i class="fas fa-user"></i><span class="ms-3 d-none d-sm-inline">My Profile</span>
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+
+                        @if (type == "owner")
+                        {
+                            <li class="nav-item mt-2">
+                                <a asp-controller="Users" asp-action="Index" class="nav-link px-sm-0 px-2 text-white text-decoration-none">
+                                    <i class="fas fa-users"></i><span class="ms-3 d-none d-sm-inline">Users</span>
+                                </a>
+                            </li>
+                        }
+                        <li class="nav-item mt-2">
+                            <a href="#" class="nav-link px-sm-0 px-2 text-white text-decoration-none">
+                                <i class="fas fa-envelope"></i><span class="ms-3 d-none d-sm-inline">Messages</span>
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
-                        </li>
+                        @if (type == "manager" || type == "tenant")
+                        {
+                            <li class="nav-item mt-2">
+                                <a href="#" class="nav-link px-sm-0 px-2 text-white text-decoration-none">
+                                    <i class="fas fa-calendar-day"></i><span class="ms-3 d-none d-sm-inline">Appointments</span>
+                                </a>
+                            </li>
+                        }
                     </ul>
+                    <div class="py-sm-4 mt-sm-auto ms-auto ms-sm-0 mb-4 flex-shrink-1 px-3">
+                        <a asp-controller="Account" asp-action="Logout" class="d-flex align-items-center text-white text-decoration-none">
+                            <i class="fas fa-power-off"></i><span class="ms-3 d-none d-sm-inline">Log out</span>
+                        </a>
+                    </div>
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+            <div class="col d-flex flex-column h-sm-100">
+                <main role="main" class="row overflow-auto">
+                    @RenderBody()
+                </main>
+
+                <footer class="row bg-light py-4 mt-auto border-top text-muted d-flex align-items-center justify-content-center">
+                     &copy; 2024 - RentRight
+                </footer>
+            </div>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - RentRight - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
