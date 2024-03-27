@@ -15,3 +15,19 @@
     padding: 5px 15px;
     width: 30vw;
 }
+
+p {
+    display: -webkit-box;
+    max-width: 200px;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.card {
+    cursor: pointer;
+}
+
+.card:hover {
+    border: 2px solid #6d85bc;    
+}
