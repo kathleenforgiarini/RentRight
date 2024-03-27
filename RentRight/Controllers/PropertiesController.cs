@@ -59,11 +59,8 @@ namespace RentRight.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name, Description, Street, StNumber, PostalCode, City, Owner, Manager, PhotoFile")] Property property)
+        public async Task<IActionResult> Create([Bind("Name, Description, Street, StNumber, PostalCode, City, OwnerId, ManagerId, PhotoFile")] Property property)
         {
-            property.Owner = await _context.User.FirstOrDefaultAsync(u => u.Id == property.Owner.Id);
-            property.Manager = await _context.User.FirstOrDefaultAsync(u => u.Id == property.Manager.Id);
-
             if (property.PhotoFile != null && property.PhotoFile.Length > 0)
             {
                 using (var memoryStream = new MemoryStream())
@@ -82,7 +79,6 @@ namespace RentRight.Controllers
             }
             else
             {
-                
                 _context.Add(property);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -102,6 +98,11 @@ namespace RentRight.Controllers
             {
                 return NotFound();
             }
+            List<User> owners = await _context.User.Where(u => u.Type == "owner").ToListAsync();
+            List<User> managers = await _context.User.Where(u => u.Type == "manager").ToListAsync();
+            ViewBag.Managers = managers;
+            ViewBag.Owners = owners;
+
             return View(@property);
         }
 
@@ -110,11 +111,20 @@ namespace RentRight.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Street,StNumber,PostalCode,City,Photo")] Property @property)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Street,StNumber,PostalCode,City,OwnerId,ManagerId,PhotoFile")] Property @property)
         {
             if (id != @property.Id)
             {
                 return NotFound();
+            }
+
+            if (property.PhotoFile != null && property.PhotoFile.Length > 0)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await property.PhotoFile.CopyToAsync(memoryStream);
+                    property.Photo = memoryStream.ToArray();
+                }
             }
 
             if (ModelState.IsValid)
@@ -137,6 +147,10 @@ namespace RentRight.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            List<User> owners = await _context.User.Where(u => u.Type == "owner").ToListAsync();
+            List<User> managers = await _context.User.Where(u => u.Type == "manager").ToListAsync();
+            ViewBag.Managers = managers;
+            ViewBag.Owners = owners;
             return View(@property);
         }
 

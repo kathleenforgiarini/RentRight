@@ -3,78 +3,94 @@
 @{
     ViewData["Title"] = "Edit";
 }
+<link rel="stylesheet" href="~/css/properties.css" asp-append-version="true" />
 
-<h1>Edit</h1>
+<h1>Edit a property</h1>
 
-<h4>Property</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
+<div class="row d-flex justify-content-center mt-5">
+    <div class="col-md-6">
+        <form asp-action="Edit" class="d-flex flex-column justify-content-center align-items-center" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
+            <div class="w-100 d-flex justify-content-between">
+                <div class="col-md-3">
+                    <img width="150" height="150" src="data:image;base64,@Convert.ToBase64String(Model.Photo)" class="preview-image" />
+                </div>
+                <div class="align-self-end col-8">
+                    <label asp-for="PhotoFile" class="control-label"></label>
+                    <input asp-for="PhotoFile" type="file" accept="image/*" class="form-control" />
+                    <span asp-validation-for="PhotoFile" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group mt-3 w-100">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mt-3 w-100">
                 <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
+                <textarea asp-for="Description" class="form-control"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mt-3 w-100">
                 <label asp-for="Street" class="control-label"></label>
                 <input asp-for="Street" class="form-control" />
                 <span asp-validation-for="Street" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="StNumber" class="control-label"></label>
-                <input asp-for="StNumber" class="form-control" />
-                <span asp-validation-for="StNumber" class="text-danger"></span>
+            <div class="w-100 d-flex justify-content-between">
+                <div class="form-group mt-3 col-3">
+                    <label asp-for="StNumber" class="control-label"></label>
+                    <input asp-for="StNumber" class="form-control" required />
+                    <span asp-validation-for="StNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-3 col-3">
+                    <label asp-for="PostalCode" class="control-label"></label>
+                    <input asp-for="PostalCode" class="form-control" required />
+                    <span asp-validation-for="PostalCode" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-3 col-3">
+                    <label asp-for="City" class="control-label"></label>
+                    <input asp-for="City" class="form-control" required />
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="PostalCode" class="control-label"></label>
-                <input asp-for="PostalCode" class="form-control" />
-                <span asp-validation-for="PostalCode" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="City" class="control-label"></label>
-                <input asp-for="City" class="form-control" />
-                <span asp-validation-for="City" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Owner" class="control-label"></label>
-                <select asp-for="Owner.Id" class="form-control">
-                    <option value="">Select Owner</option>
 
-                </select>
-                <span asp-validation-for="Owner" class="text-danger"></span>
+            <div class="w-100 d-flex justify-content-between">
+                <div class="form-group mt-3 col-5">
+                    <label asp-for="OwnerId" class="control-label"></label>
+                    <select asp-for="OwnerId" class="form-control" required>
+                        <option value="">Select Owner</option>
+                        @foreach (var owner in ViewBag.Owners)
+                        {
+                            <option value="@owner.Id">@owner.FirstName</option>
+                        }
+                    </select>
+                    <span asp-validation-for="OwnerId" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-3 col-5">
+                    <label asp-for="ManagerId" class="control-label"></label>
+                    <select asp-for="ManagerId" class="form-control" required>
+                        <option value="">Select Manager</option>
+                        @foreach (var manager in ViewBag.Managers)
+                        {
+                            <option value="@manager.Id">@manager.FirstName</option>
+                        }
+                    </select>
+                    <span asp-validation-for="ManagerId" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Manager" class="control-label"></label>
-                <select asp-for="Manager.Id" class="form-control">
-                    <option value="">Select Manager</option>
- 
-                </select>
-                <span asp-validation-for="Manager" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PhotoFile" class="control-label"></label>
-                <input asp-for="PhotoFile" type="file" class="form-control" />
-                <span asp-validation-for="PhotoFile" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <div class="form-group mt-5 w-100">
+                <input type="submit" value="Save" class="btnSave" />
             </div>
         </form>
+        <div class="form-group mt-5 w-100 d-flex justify-content-center align-items-center align-content-center">
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btnDelete">Delete</a>
+        </div>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/properties.js"></script>
+
 }
+

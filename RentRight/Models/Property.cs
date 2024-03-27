@@ -16,12 +16,17 @@ namespace RentRight.Models
         public string StNumber { get; set; } = string.Empty;
         public string PostalCode { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
-        public User Owner { get; set; }
-        public User Manager { get; set; }
+        [Required(ErrorMessage = "Please select an owner.")]
+        public int OwnerId { get; set; }
+        public virtual User? Owner { get; set; }
+        [Required(ErrorMessage = "Please select a manager.")]
+        public int ManagerId {  get; set; }
+        public virtual User? Manager { get; set; }
         public byte[] Photo { get; set; } = new byte[0];
         [NotMapped]
         [Required(ErrorMessage = "Please select a photo.")]
-        public IFormFile PhotoFile { get; set; }
+        [DisplayName("Photo")]
+        public IFormFile? PhotoFile { get; set; }
 
     }
 }

@@ -31,6 +31,7 @@ namespace RentRight.Data
                     IsActive = true,
                 }
                 );
+
             base.OnModelCreating(modelBuilder);
         }
     }
