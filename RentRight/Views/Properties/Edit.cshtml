@@ -44,9 +44,25 @@
                 <span asp-validation-for="City" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Photo" class="control-label"></label>
-                <input asp-for="Photo" class="form-control" />
-                <span asp-validation-for="Photo" class="text-danger"></span>
+                <label asp-for="Owner" class="control-label"></label>
+                <select asp-for="Owner.Id" class="form-control">
+                    <option value="">Select Owner</option>
+
+                </select>
+                <span asp-validation-for="Owner" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Manager" class="control-label"></label>
+                <select asp-for="Manager.Id" class="form-control">
+                    <option value="">Select Manager</option>
+ 
+                </select>
+                <span asp-validation-for="Manager" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhotoFile" class="control-label"></label>
+                <input asp-for="PhotoFile" type="file" class="form-control" />
+                <span asp-validation-for="PhotoFile" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
