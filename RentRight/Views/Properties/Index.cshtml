@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<RentRight.Models.Property>
+@using RentRight.Models.Enums;
 
 @{
     ViewData["Title"] = "Properties";
@@ -16,14 +17,14 @@
     <h3>Properties</h3>
 
     <div class="d-flex justify-content-between align-items-end">
-        <input class="search me-2" type="text" placeholder="Search..." />
-        <a class="btnSearch fw-bold px-6">
-            Search
-        </a>
+        <form asp-action="Search" method="get">
+            <input class="search me-2" type="text" placeholder="Search..." name="searchTerm" />
+            <input type="submit" value="Search" class="btnSearch" />
+        </form>
     </div>
 </div>
 
-@if(type != "tenant")
+@if (type != TypeUsers.Tenant.ToString())
 {
     <a asp-action="Create" class="d-flex justify-content-between align-items-center btnCreate mt-3 fw-bold px-6">
         <i class="fas fa-plus me-2"></i>Create
@@ -34,14 +35,14 @@
     @foreach (var item in Model)
     {
         <div class="col-md-3">
-            <a>
+            <a asp-action="Index" asp-controller="Apartments" asp-route-id="@item.Id">
                 <div class="card" >
                     <img height="220" class="card-img-top" src="data:image;base64,@Convert.ToBase64String(item.Photo)" alt="Property Photo" />
                     <div class="card-body d-flex flex-column justify-content-between">
                         <h5 class="card-title">@item.Name</h5>
                         <p class="card-text">@item.Description</p>
                         <p class="card-text align-self-end"><small class="text-muted">@item.StNumber, @item.Street - @item.City, QC</small></p>
-                        @if (type != "tenant")
+                        @if (type != TypeUsers.Tenant.ToString())
                         {
                             <a asp-action="Edit" asp-route-id="@item.Id" class="btnEdit btn fw-bold px-6">Edit</a>
                         }

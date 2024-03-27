@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RentRight.Models;
+using RentRight.Models.Enums;
 
 namespace RentRight.Data
 {
@@ -16,6 +17,8 @@ namespace RentRight.Data
 
         public DbSet<RentRight.Models.User> User { get; set; } = default!;
         public DbSet<RentRight.Models.Property> Property { get; set; } = default!;
+        public DbSet<RentRight.Models.Apartment> Apartment { get; set; } = default!;
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -27,7 +30,7 @@ namespace RentRight.Data
                     LastName = "Owner",
                     Email = "owner@owner.com",
                     Password = "1234",
-                    Type = "owner",
+                    Type = TypeUsers.Owner.ToString(),
                     IsActive = true,
                 }
                 );

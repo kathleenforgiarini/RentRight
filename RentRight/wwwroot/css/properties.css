@@ -1,12 +1,15 @@
 ﻿.btnCreate, .btnSearch {
     background-color: #D9D9D9;
-    color: #444444;
     border: none;
     border-radius: 5px;
     width: fit-content;
     padding: 5px 15px;
-    text-decoration: none;
+    font-weight: bold;
 }
+
+    .btnCreate:hover, .btnSearch:hover {
+        border: 1px solid #444444;
+    }
 
 .search {
     border: none;

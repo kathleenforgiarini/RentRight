@@ -24,15 +24,15 @@ builder.Services.AddAuthentication("MyCookieAuth").AddCookie("MyCookieAuth",
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("RequireOwnerRole", policy =>
-        policy.RequireClaim("Type", "owner"));
+        policy.RequireClaim("Type", "Owner"));
 
     options.AddPolicy("RequireManagerRole", policy =>
-       policy.RequireClaim("Type", "manager"));
+       policy.RequireClaim("Type", "Manager"));
 
     options.AddPolicy("RequireTenantRole", policy =>
-       policy.RequireClaim("Type", "tenant"));
+       policy.RequireClaim("Type", "Tenant"));
     options.AddPolicy("RequireOwnerOrManagerRole", policy =>
-        policy.RequireClaim("Type", "owner", "manager"));
+        policy.RequireClaim("Type", "Owner", "Manager"));
 });
 
 

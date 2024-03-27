@@ -1,4 +1,5 @@
 ﻿@model RentRight.Models.User
+@using RentRight.Models.Enums
 
 @{
     ViewData["Title"] = "Edit";
@@ -33,7 +34,7 @@
                 <input asp-for="Password" class="form-control" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
-            @if (Model.Type == "owner")
+            @if (Model.Type == TypeUsers.Owner.ToString())
             {
                 <div class="form-group">
                     <label asp-for="Type" class="control-label"></label>
