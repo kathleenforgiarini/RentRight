@@ -31,6 +31,8 @@ builder.Services.AddAuthorization(options =>
 
     options.AddPolicy("RequireTenantRole", policy =>
        policy.RequireClaim("Type", "tenant"));
+    options.AddPolicy("RequireOwnerOrManagerRole", policy =>
+        policy.RequireClaim("Type", "owner", "manager"));
 });
 
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,6 +12,7 @@ using RentRight.Models;
 
 namespace RentRight.Controllers
 {
+    [Authorize]
     public class PropertiesController : Controller
     {
         private readonly RentRightContext _context;
@@ -45,6 +47,7 @@ namespace RentRight.Controllers
         }
 
         // GET: Properties/Create
+        [Authorize(Policy = "RequireOwnerOrManagerRole")]
         public async Task<IActionResult> Create()
         {
             List<User> owners = await _context.User.Where(u => u.Type == "owner").ToListAsync();
@@ -86,6 +89,7 @@ namespace RentRight.Controllers
         }
 
         // GET: Properties/Edit/5
+        [Authorize(Policy = "RequireOwnerOrManagerRole")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -155,6 +159,7 @@ namespace RentRight.Controllers
         }
 
         // GET: Properties/Delete/5
+        [Authorize(Policy = "RequireOwnerOrManagerRole")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
