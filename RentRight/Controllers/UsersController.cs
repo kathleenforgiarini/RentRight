@@ -157,5 +157,17 @@ namespace RentRight.Controllers
         {
             return _context.User.Any(e => e.Id == id);
         }
+
+        public IActionResult Search(string searchTerm)
+        {
+            var users = _context.User.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                users = users.Where(p => p.FirstName.Contains(searchTerm) || p.LastName.Contains(searchTerm) || p.Email.Contains(searchTerm) || p.Type.Contains(searchTerm));
+            }
+
+            return View("Index", users.ToList());
+        }
     }
 }

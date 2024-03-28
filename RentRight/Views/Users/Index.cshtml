@@ -1,15 +1,27 @@
 ﻿@model IEnumerable<RentRight.Models.User>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Users";
 }
 
-<h1>Index</h1>
+<link rel="stylesheet" href="~/css/users.css" asp-append-version="true" />
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<div class="d-flex justify-content-between px-0 fw-bold">
+    <h3>Users</h3>
+
+    <div class="d-flex justify-content-between align-items-end">
+        <form asp-action="Search" method="get">
+            <input class="search me-2" type="text" placeholder="Search..." name="searchTerm" />
+            <input type="submit" value="Search" class="btnSearch" />
+        </form>
+    </div>
+</div>
+
+<a asp-action="Create" class="d-flex justify-content-between align-items-center btnCreate mt-3 fw-bold px-6">
+    <i class="fas fa-plus me-2"></i>Create
+</a>
+
+<table class="table mt-3 table-striped table-hover">
     <thead>
         <tr>
             <th>
@@ -36,28 +48,33 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
+            <td class="align-content-center">
                 @Html.DisplayFor(modelItem => item.FirstName)
             </td>
-            <td>
+                <td class="align-content-center">
                 @Html.DisplayFor(modelItem => item.LastName)
             </td>
-            <td>
+                <td class="align-content-center">
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
-            <td>
+            <td class="align-content-center">
                 @Html.DisplayFor(modelItem => item.Password)
             </td>
-            <td>
+                <td class="align-content-center">
                 @Html.DisplayFor(modelItem => item.Type)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsActive)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            
+            @if (item.IsActive)
+            {
+                    <td class="align-content-center">Yes</td>
+            }
+            else{
+                    <td class="align-content-center">No</td>
+            }
+            
+            <td class="align-content-center">
+                <a class="btn btn-outline-secondary" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
 }

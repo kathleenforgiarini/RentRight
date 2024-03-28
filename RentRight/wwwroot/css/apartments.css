@@ -19,23 +19,12 @@
     width: 30vw;
 }
 
-p {
-    display: -webkit-box;
-    max-width: 200px;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+.textDesc {
+    color: #7C7C7C;
+    word-wrap: break-word;
 }
 
-.card {
-    cursor: pointer;
-}
-
-.card:hover {
-    border: 2px solid #6d85bc;    
-}
-
-a{
+a {
     text-decoration: none;
     color: #444444;
 }
@@ -43,19 +32,6 @@ a{
     a:hover {
         color: #444444;
     }
-
-.btnEdit {
-    background-color: #D9D9D9;
-    color: #444444;
-    border-radius: 5px;
-    width: fit-content;
-    margin-top: 12px;
-    padding: 3px 10px;
-}
-
-.btnEdit:hover{
-    border: 2px solid #6d85bc;
-}
 
 .btnSave {
     border: none;
@@ -66,9 +42,10 @@ a{
     font-weight: bold;
     padding: 8px 5px;
 }
-.btnSave:hover{
-    transform: scale(1.01);
-}
+
+    .btnSave:hover {
+        transform: scale(1.01);
+    }
 
 .btnDelete {
     width: 40%;
@@ -80,8 +57,34 @@ a{
     padding: 5px 0px;
     text-align: center;
 }
-
     .btnDelete:hover {
         color: red;
         border: 2px solid red;
+    }
+
+.textSize{
+    font-size: 14px;
+}
+
+.textPrice {
+    color: #6d85bc;
+    font-weight: bold;
+}
+
+.textAbout{
+    color: #444444;
+    font-weight: bold;
+}
+
+.btnEdit, .btnContact, .btnMeeting {
+    font-size: 14px;
+    border: 1px solid #6d85bc;
+    color: #6d85bc;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+    .btnContact:hover, .btnEdit:hover, .btnMeeting:hover {
+        border: 2px solid #6d85bc;
+        color: #6d85bc;
     }

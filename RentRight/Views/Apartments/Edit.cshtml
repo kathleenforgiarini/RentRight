@@ -1,69 +1,84 @@
 ﻿@model RentRight.Models.Apartment
+@using RentRight.Models.Enums
 
 @{
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<link rel="stylesheet" href="~/css/apartments.css" asp-append-version="true" />
 
-<h4>Apartment</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
+<h1>Edit an apartment</h1>
+
+<div class="row d-flex justify-content-center mt-5">
+    <div class="col-md-6">
+        <form asp-action="Edit" class="d-flex flex-column justify-content-center align-items-center" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Bedrooms" class="control-label"></label>
-                <input asp-for="Bedrooms" class="form-control" />
-                <span asp-validation-for="Bedrooms" class="text-danger"></span>
+            <input type="hidden" asp-for="PropertyId" />
+            <div class="w-100 d-flex justify-content-between">
+                <div class="col-md-3">
+                    <img width="150" height="150" src="data:image;base64,@Convert.ToBase64String(Model.Photo)" class="preview-image" />
+                </div>
+                <div class="align-self-end col-8">
+                    <label asp-for="PhotoFile" class="control-label"></label>
+                    <input asp-for="PhotoFile" type="file" accept="image/*" class="form-control" />
+                    <span asp-validation-for="PhotoFile" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Bathrooms" class="control-label"></label>
-                <input asp-for="Bathrooms" class="form-control" />
-                <span asp-validation-for="Bathrooms" class="text-danger"></span>
+            <div class="w-100 d-flex justify-content-between">
+                <div class="form-group mt-3 col-5">
+                    <label asp-for="Bedrooms" class="control-label"></label>
+                    <input asp-for="Bedrooms" type="number" class="form-control" required />
+                    <span asp-validation-for="Bedrooms" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-3 col-5">
+                    <label asp-for="Bathrooms" class="control-label"></label>
+                    <input asp-for="Bathrooms" type="number" class="form-control" required />
+                    <span asp-validation-for="Bathrooms" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Pets" /> @Html.DisplayNameFor(model => model.Pets)
-                </label>
+            <div class="w-100 d-flex justify-content-between">
+                <div class="form-group mt-3 col-5 align-self-center">
+                    <label class="form-check-label">
+                        <input class="form-check-input" asp-for="Pets" /> @Html.DisplayNameFor(model => model.Pets)
+                    </label>
+                    <span asp-validation-for="Pets" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-3 col-5">
+                    <label asp-for="Size" class="control-label"></label>
+                    <input asp-for="Size" type="number" class="form-control" required />
+                    <span asp-validation-for="Size" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Size" class="control-label"></label>
-                <input asp-for="Size" class="form-control" />
-                <span asp-validation-for="Size" class="text-danger"></span>
+            <div class="w-100 d-flex justify-content-between">
+                <div class="form-group mt-3 col-5">
+                    <label asp-for="RentPrice" class="control-label"></label>
+                    <input asp-for="RentPrice" type="number" class="form-control" required />
+                    <span asp-validation-for="RentPrice" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-3 col-5">
+                    <label asp-for="Status" class="control-label"></label>
+                    <select asp-for="Status" class="form-control">
+                        @foreach (var status in Enum.GetValues(typeof(ApartmentStatus)))
+                        {
+                            <option value="@status">@status</option>
+                        }
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="PropertyId" class="control-label"></label>
-                <select asp-for="PropertyId" class="form-control" asp-items="ViewBag.PropertyId"></select>
-                <span asp-validation-for="PropertyId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RentPrice" class="control-label"></label>
-                <input asp-for="RentPrice" class="form-control" />
-                <span asp-validation-for="RentPrice" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Photo" class="control-label"></label>
-                <input asp-for="Photo" class="form-control" />
-                <span asp-validation-for="Photo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <div class="form-group mt-5 w-100">
+                <input type="submit" value="Save" class="btnSave" />
             </div>
         </form>
+        <div class="form-group mt-5 w-100 d-flex justify-content-center align-items-center align-content-center">
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btnDelete">Delete</a>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/properties.js"></script>
+
 }
