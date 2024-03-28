@@ -25,7 +25,8 @@ namespace RentRight.Controllers
             if (User.Identity?.IsAuthenticated == true)
             {
                 ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
-               
+                ViewBag.ErrorMessage = TempData["ErrorMessage"] as string;
+
                 return RedirectToAction("Index", "Properties");
             }
             return RedirectToAction("Login", "Account");          

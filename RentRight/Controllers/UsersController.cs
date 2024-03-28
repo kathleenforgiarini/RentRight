@@ -156,13 +156,22 @@ namespace RentRight.Controllers
             var user = await _context.User.FindAsync(id);
             if (user != null)
             {
-                _context.User.Remove(user);
-                await _context.SaveChangesAsync();
-                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                if (userId == id)
+                try
                 {
-                    return RedirectToAction("Logout", "Account");
+                    _context.User.Remove(user);
+                    await _context.SaveChangesAsync();
+                    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    if (userId == id)
+                    {
+                        return RedirectToAction("Logout", "Account");
+                    }
                 }
+                catch (DbUpdateException)
+                {
+                    TempData["ErrorMessage"] = "You can not delete your account. There are properties registered for you!";
+                    return RedirectToAction("Index", "Home");
+                }
+
             }
             
             return RedirectToAction(nameof(Index));

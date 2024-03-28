@@ -26,6 +26,8 @@ namespace RentRight.Controllers
         // GET: Properties
         public async Task<IActionResult> Index()
         {
+            ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
+            ViewBag.ErrorMessage = TempData["ErrorMessage"] as string;
             return View(await _context.Property.ToListAsync());
         }
 
@@ -69,6 +71,7 @@ namespace RentRight.Controllers
             {
                 _context.Add(property);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Property created!";
                 return RedirectToAction(nameof(Index));
             }
         }
@@ -123,6 +126,7 @@ namespace RentRight.Controllers
                 {
                     _context.Update(@property);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Property updated!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -176,6 +180,7 @@ namespace RentRight.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Property deleted!";
             return RedirectToAction(nameof(Index));
         }
 
