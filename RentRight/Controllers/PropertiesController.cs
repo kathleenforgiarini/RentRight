@@ -29,23 +29,6 @@ namespace RentRight.Controllers
             return View(await _context.Property.ToListAsync());
         }
 
-        // GET: Properties/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var @property = await _context.Property
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (@property == null)
-            {
-                return NotFound();
-            }
-
-            return View(@property);
-        }
 
         // GET: Properties/Create
         [Authorize(Policy = "RequireOwnerOrManagerRole")]
@@ -63,6 +46,7 @@ namespace RentRight.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "RequireOwnerOrManagerRole")]
         public async Task<IActionResult> Create([Bind("Name, Description, Street, StNumber, PostalCode, City, OwnerId, ManagerId, PhotoFile")] Property property)
         {
             if (property.PhotoFile != null && property.PhotoFile.Length > 0)
@@ -116,6 +100,7 @@ namespace RentRight.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "RequireOwnerOrManagerRole")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Street,StNumber,PostalCode,City,OwnerId,ManagerId,PhotoFile")] Property @property)
         {
             if (id != @property.Id)
@@ -181,6 +166,7 @@ namespace RentRight.Controllers
         // POST: Properties/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "RequireOwnerOrManagerRole")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var @property = await _context.Property.FindAsync(id);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RentRight.Data;
 using RentRight.Models;
+using RentRight.Models.Enums;
 
 namespace RentRight.Controllers
 {
@@ -28,26 +30,8 @@ namespace RentRight.Controllers
             return View(await _context.User.ToListAsync());
         }
 
-        // GET: Users/Details/5
-        [Authorize(Policy = "RequireManagerRole")]
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var user = await _context.User
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return View(user);
-        }
-
         // GET: Users/Create
+        [Authorize(Policy = "RequireOwnerRole")]
         public IActionResult Create()
         {
             return View();
@@ -58,6 +42,7 @@ namespace RentRight.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "RequireOwnerRole")]
         public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Email,Password,Type,IsActive")] User user)
         {
             if (ModelState.IsValid)
@@ -75,6 +60,14 @@ namespace RentRight.Controllers
             if (id == null)
             {
                 return NotFound();
+            }
+
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userFound = await _context.User.FindAsync(userId);
+            if (userFound.Type != TypeUsers.Owner.ToString() && userId != id)
+            {
+                return RedirectToAction("AccessDenied", "Account");
+
             }
 
             var user = await _context.User.FindAsync(id);
@@ -115,7 +108,18 @@ namespace RentRight.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var userFound = await _context.User.FindAsync(userId);
+                if (userFound.Type == TypeUsers.Owner.ToString())
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = "Account updated!";
+                    return RedirectToAction("Index", "Properties");
+                }
             }
             return View(user);
         }
@@ -126,6 +130,12 @@ namespace RentRight.Controllers
             if (id == null)
             {
                 return NotFound();
+            }
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userFound = await _context.User.FindAsync(userId);
+            if (userFound.Type != TypeUsers.Owner.ToString() && userId != id)
+            {
+                return RedirectToAction("AccessDenied", "Account");
             }
 
             var user = await _context.User
@@ -147,9 +157,14 @@ namespace RentRight.Controllers
             if (user != null)
             {
                 _context.User.Remove(user);
+                await _context.SaveChangesAsync();
+                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                if (userId == id)
+                {
+                    return RedirectToAction("Logout", "Account");
+                }
             }
-
-            await _context.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
         }
 

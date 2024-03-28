@@ -36,25 +36,7 @@ namespace RentRight.Controllers
             return View(rentRightContext);
         }
 
-        // GET: Apartments/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var apartment = await _context.Apartment
-                .Include(a => a.Property)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (apartment == null)
-            {
-                return NotFound();
-            }
-
-            return View(apartment);
-        }
-
+      
         // GET: Apartments/Create
         [Authorize(Policy = "RequireOwnerOrManagerRole")]
         public IActionResult Create(int propertyId)
@@ -68,6 +50,7 @@ namespace RentRight.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "RequireOwnerOrManagerRole")]
         public async Task<IActionResult> Create([Bind("Bedrooms,Bathrooms,Pets,Size,PropertyId,RentPrice,PhotoFile,Status")] Apartment apartment)
         {
             if (apartment.PhotoFile != null && apartment.PhotoFile.Length > 0)
@@ -112,6 +95,7 @@ namespace RentRight.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "RequireOwnerOrManagerRole")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Bedrooms,Bathrooms,Pets,Size,PropertyId,RentPrice,PhotoFile,Status")] Apartment apartment)
         {
             if (id != apartment.Id)
@@ -176,6 +160,7 @@ namespace RentRight.Controllers
         // POST: Apartments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "RequireOwnerOrManagerRole")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var apartment = await _context.Apartment.FindAsync(id);

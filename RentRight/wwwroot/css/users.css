@@ -41,3 +41,19 @@ a {
     .btnSave:hover {
         transform: scale(1.01);
     }
+
+.btnDelete {
+    width: 40%;
+    text-decoration: none;
+    border: 1px solid red;
+    border-radius: 5px;
+    color: red;
+    font-weight: bold;
+    padding: 5px 0px;
+    text-align: center;
+}
+
+    .btnDelete:hover {
+        color: red;
+        border: 2px solid red;
+    }

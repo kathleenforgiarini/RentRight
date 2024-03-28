@@ -10,7 +10,7 @@
 }
 <link rel="stylesheet" href="~/css/users.css" asp-append-version="true" />
 
-<h1>Edit a user</h1>
+<h1>Edit profile</h1>
 
 <div class="row d-flex justify-content-center mt-5">
     <div class="col-md-6">
@@ -66,6 +66,9 @@
             </div>
 
         </form>
+        <div class="form-group mt-5 w-100 d-flex justify-content-center align-items-center align-content-center">
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btnDelete">Delete</a>
+        </div>
     </div>
 </div>
 
