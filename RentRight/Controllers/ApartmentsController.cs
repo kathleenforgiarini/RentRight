@@ -33,6 +33,8 @@ namespace RentRight.Controllers
             ViewBag.PropertyName = @property != null ? @property.Name : "Property not found";
             ViewBag.PropertyDescription = @property != null ? @property.Description : "Property not found";
             ViewBag.PropertyId = propertyId;
+            ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
+            ViewBag.ErrorMessage = TempData["ErrorMessage"] as string;
             return View(rentRightContext);
         }
 
@@ -66,9 +68,11 @@ namespace RentRight.Controllers
             {
                 _context.Add(apartment);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Apartment created!";
                 return RedirectToAction("Index", new { propertyId = apartment.PropertyId });
             }
             ViewBag.PropertyId = apartment.PropertyId;
+            TempData["ErrorMessage"] = "Property was not created. Try again!";
             return View(apartment);
         }
 
@@ -96,7 +100,7 @@ namespace RentRight.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "RequireOwnerOrManagerRole")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Bedrooms,Bathrooms,Pets,Size,PropertyId,RentPrice,PhotoFile,Status")] Apartment apartment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Bedrooms,Bathrooms,Pets,Size,PropertyId,RentPrice,Photo,PhotoFile,Status")] Apartment apartment)
         {
             if (id != apartment.Id)
             {
@@ -131,9 +135,11 @@ namespace RentRight.Controllers
                     }
                 }
                 ViewBag.PropertyId = apartment.PropertyId;
+                TempData["SuccessMessage"] = "Apartment updated!";
                 return RedirectToAction("Index", new { propertyId = apartment.PropertyId });
             }
             ViewData["PropertyId"] = new SelectList(_context.Property, "Id", "Id", apartment.PropertyId);
+            TempData["SuccessMessage"] = "Apartment was not updated. Try again!";
             return View(apartment);
         }
 
@@ -170,6 +176,7 @@ namespace RentRight.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Apartment deleted!";
             return RedirectToAction("Index", new { propertyId = apartment.PropertyId });
         }
 

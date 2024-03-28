@@ -104,7 +104,7 @@ namespace RentRight.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "RequireOwnerOrManagerRole")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Street,StNumber,PostalCode,City,OwnerId,ManagerId,Photo, PhotoFile")] Property @property)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Street,StNumber,PostalCode,City,OwnerId,ManagerId,Photo,PhotoFile")] Property @property)
         {
             if (id != @property.Id)
             {

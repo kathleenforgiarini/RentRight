@@ -22,7 +22,6 @@ namespace RentRight.Models
         public decimal RentPrice { get; set; }
         public byte[] Photo { get; set; } = new byte[0];
         [NotMapped]
-        [Required(ErrorMessage = "Please select a photo.")]
         [DisplayName("Photo")]
         public IFormFile? PhotoFile { get; set; }
         public string Status {  get; set; } = ApartmentStatus.Available.ToString();
