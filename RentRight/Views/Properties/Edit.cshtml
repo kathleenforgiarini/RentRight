@@ -19,6 +19,7 @@
                 <div class="align-self-end col-8">
                     <label asp-for="PhotoFile" class="control-label"></label>
                     <input asp-for="PhotoFile" type="file" accept="image/*" class="form-control" />
+                    <input asp-for="Photo" type="hidden"/>
                     <span asp-validation-for="PhotoFile" class="text-danger"></span>
                 </div>
             </div>

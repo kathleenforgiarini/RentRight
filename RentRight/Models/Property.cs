@@ -24,7 +24,6 @@ namespace RentRight.Models
         public virtual User? Manager { get; set; }
         public byte[] Photo { get; set; } = new byte[0];
         [NotMapped]
-        [Required(ErrorMessage = "Please select a photo.")]
         [DisplayName("Photo")]
         public IFormFile? PhotoFile { get; set; }
 
