@@ -27,6 +27,8 @@ namespace RentRight.Controllers
         [Authorize (Policy = "RequireOwnerRole")]
         public async Task<IActionResult> Index()
         {
+            ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
+            ViewBag.ErrorMessage = TempData["ErrorMessage"] as string;
             return View(await _context.User.ToListAsync());
         }
 
@@ -47,8 +49,16 @@ namespace RentRight.Controllers
         {
             if (ModelState.IsValid)
             {
+                var existingUser = await _context.User.FirstOrDefaultAsync(u => u.Email == user.Email);
+                if (existingUser != null)
+                {
+                    TempData["ErrorMessage"] = "This e-mail already exists!";
+                    return RedirectToAction(nameof(Index));
+                }
+
                 _context.Add(user);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "User created!";
                 return RedirectToAction(nameof(Index));
             }
             return View(user);
@@ -94,6 +104,18 @@ namespace RentRight.Controllers
             {
                 try
                 {
+                    var existingUser = await _context.User.FindAsync(id);
+                    if (existingUser.Email != user.Email)
+                    {
+                        // Verifica se o novo email já existe no banco de dados
+                        var emailExists = await _context.User.AnyAsync(u => u.Email == user.Email);
+                        if (emailExists)
+                        {
+                            TempData["ErrorMessage"] = "This e-mail already belongs to another user!";
+                            return RedirectToAction(nameof(Index));
+                        }
+                    }
+
                     _context.Update(user);
                     await _context.SaveChangesAsync();
                 }
@@ -113,6 +135,7 @@ namespace RentRight.Controllers
                 var userFound = await _context.User.FindAsync(userId);
                 if (userFound.Type == TypeUsers.Owner.ToString())
                 {
+                    TempData["SuccessMessage"] = "User updated!";
                     return RedirectToAction(nameof(Index));
                 }
                 else
@@ -173,7 +196,7 @@ namespace RentRight.Controllers
                 }
 
             }
-            
+            TempData["SuccessMessage"] = "User deleted!";
             return RedirectToAction(nameof(Index));
         }
 

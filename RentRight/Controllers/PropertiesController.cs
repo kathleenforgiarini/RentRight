@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RentRight.Data;
 using RentRight.Models;
 using RentRight.Models.Enums;
@@ -49,7 +50,7 @@ namespace RentRight.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "RequireOwnerOrManagerRole")]
-        public async Task<IActionResult> Create([Bind("Name, Description, Street, StNumber, PostalCode, City, OwnerId, ManagerId, PhotoFile")] Property property)
+        public async Task<IActionResult> Create([Bind("Name, Description, Street, StNumber, PostalCode, City, OwnerId, ManagerId, PhotoFile")] Models.Property property)
         {
             if (property.PhotoFile != null && property.PhotoFile.Length > 0)
             {
@@ -104,7 +105,7 @@ namespace RentRight.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "RequireOwnerOrManagerRole")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Street,StNumber,PostalCode,City,OwnerId,ManagerId,Photo,PhotoFile")] Property @property)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Street,StNumber,PostalCode,City,OwnerId,ManagerId,Photo,PhotoFile")] Models.Property @property)
         {
             if (id != @property.Id)
             {
@@ -148,25 +149,6 @@ namespace RentRight.Controllers
             return View(@property);
         }
 
-        // GET: Properties/Delete/5
-        [Authorize(Policy = "RequireOwnerOrManagerRole")]
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var @property = await _context.Property
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (@property == null)
-            {
-                return NotFound();
-            }
-
-            return View(@property);
-        }
-
         // POST: Properties/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -176,12 +158,17 @@ namespace RentRight.Controllers
             var @property = await _context.Property.FindAsync(id);
             if (@property != null)
             {
+                var apartments = await _context.Apartment.Where(a => a.PropertyId == id).ToListAsync();
+                if (apartments.Count > 0)
+                {
+                    return StatusCode(500, "You canot delete this property, there are apartments related to it.");
+                }
                 _context.Property.Remove(@property);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Property deleted!";
+                return StatusCode(200);
             }
-
-            await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "Property deleted!";
-            return RedirectToAction(nameof(Index));
+            return StatusCode(500, "An error occurred while processing your request.");
         }
 
         private bool PropertyExists(int id)

@@ -80,3 +80,27 @@
 }
     </tbody>
 </table>
+<script>
+    let successMessage = "@(ViewBag.SuccessMessage)";
+    let errorMessage = "@(ViewBag.ErrorMessage)";
+    if (successMessage !== "") {
+
+        new Notify({
+            title: successMessage,
+            position: 'right top',
+            effect: 'slide',
+        })
+
+    }
+
+    if (errorMessage !== "") {
+
+        new Notify({
+            status: 'error',
+            title: errorMessage,
+            position: 'right top',
+            effect: 'slide',
+        })
+
+    }
+</script>

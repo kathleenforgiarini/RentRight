@@ -7,9 +7,6 @@
         }
         reader.readAsDataURL(file);
     } else {
-        // Se nenhum arquivo for selecionado, exibir uma imagem padrão ou limpar a imagem atual
-        $('.preview-image').attr('src', 'caminho/para/imagem/padrao.jpg');
-        // Ou
-        // $('.preview-image').attr('src', '');
+        $('.preview-image').attr('src', '');
     }
 });

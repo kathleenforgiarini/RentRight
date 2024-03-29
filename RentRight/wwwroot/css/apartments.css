@@ -55,7 +55,7 @@ a {
         transform: scale(1.01);
     }
 
-.btnDelete {
+.btnDeleteApartment {
     width: 40%;
     text-decoration: none;
     border: 1px solid red;
@@ -65,9 +65,10 @@ a {
     padding: 5px 0px;
     text-align: center;
 }
-    .btnDelete:hover {
+    .btnDeleteApartment:hover {
         color: red;
         border: 2px solid red;
+        cursor: pointer;
     }
 
 .textSize{

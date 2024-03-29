@@ -14,7 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Apartments\Delete.cshtml" />
     <Content Remove="Views\Apartments\Details.cshtml" />
+    <Content Remove="Views\Properties\Delete.cshtml" />
     <Content Remove="Views\Properties\Details.cshtml" />
     <Content Remove="Views\Users\Details.cshtml" />
   </ItemGroup>

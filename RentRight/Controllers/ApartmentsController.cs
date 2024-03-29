@@ -143,26 +143,6 @@ namespace RentRight.Controllers
             return View(apartment);
         }
 
-        // GET: Apartments/Delete/5
-        [Authorize(Policy = "RequireOwnerOrManagerRole")]
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var apartment = await _context.Apartment
-                .Include(a => a.Property)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (apartment == null)
-            {
-                return NotFound();
-            }
-
-            return View(apartment);
-        }
-
         // POST: Apartments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -173,11 +153,12 @@ namespace RentRight.Controllers
             if (apartment != null)
             {
                 _context.Apartment.Remove(apartment);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Apartment deleted!";
+                return StatusCode(200, apartment.PropertyId);
             }
 
-            await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "Apartment deleted!";
-            return RedirectToAction("Index", new { propertyId = apartment.PropertyId });
+            return StatusCode(500, "An error occurred while processing your request.");
         }
 
         private bool ApartmentExists(int id)
