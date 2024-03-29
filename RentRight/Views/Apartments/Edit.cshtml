@@ -27,44 +27,39 @@
                 </div>
             </div>
             <div class="w-100 d-flex justify-content-between">
-                <div class="form-group mt-3 col-5">
+                <div class="form-floating mt-3 col-5">
+                    <input asp-for="Bedrooms" type="number" class="form-control" required placeholder="Bedrooms" />
                     <label asp-for="Bedrooms" class="control-label"></label>
-                    <input asp-for="Bedrooms" type="number" class="form-control" required />
                     <span asp-validation-for="Bedrooms" class="text-danger"></span>
                 </div>
-                <div class="form-group mt-3 col-5">
+                <div class="form-floating mt-3 col-5">
+                    <input asp-for="Bathrooms" type="number" class="form-control" required placeholder="Bathrooms" />
                     <label asp-for="Bathrooms" class="control-label"></label>
-                    <input asp-for="Bathrooms" type="number" class="form-control" required />
                     <span asp-validation-for="Bathrooms" class="text-danger"></span>
                 </div>
             </div>
             <div class="w-100 d-flex justify-content-between">
-                <div class="form-group mt-3 col-5 align-self-center">
+                <div class="form-check form-switch mt-3 col-5 align-self-center">
                     <label class="form-check-label">
                         <input class="form-check-input" asp-for="Pets" /> @Html.DisplayNameFor(model => model.Pets)
                     </label>
                     <span asp-validation-for="Pets" class="text-danger"></span>
                 </div>
-                <div class="form-group mt-3 col-5">
+                <div class="form-floating mt-3 col-5">
+                    <input asp-for="Size" type="number" class="form-control" required placeholder="Size" />
                     <label asp-for="Size" class="control-label"></label>
-                    <input asp-for="Size" type="number" class="form-control" required />
                     <span asp-validation-for="Size" class="text-danger"></span>
                 </div>
             </div>
             <div class="w-100 d-flex justify-content-between">
-                <div class="form-group mt-3 col-5">
+                <div class="form-floating mt-3 col-5">
+                    <input asp-for="RentPrice" type="number" class="form-control" required placeholder="Rent Price" />
                     <label asp-for="RentPrice" class="control-label"></label>
-                    <input asp-for="RentPrice" type="number" class="form-control" required />
                     <span asp-validation-for="RentPrice" class="text-danger"></span>
                 </div>
-                <div class="form-group mt-3 col-5">
+                <div class="form-floating mt-3 col-5">
+                    <select asp-for="Status" class="form-control" asp-items="Html.GetEnumSelectList<ApartmentStatus>()"></select>
                     <label asp-for="Status" class="control-label"></label>
-                    <select asp-for="Status" class="form-control">
-                        @foreach (var status in Enum.GetValues(typeof(ApartmentStatus)))
-                        {
-                            <option value="@status">@status</option>
-                        }
-                    </select>
                     <span asp-validation-for="Status" class="text-danger"></span>
                 </div>
             </div>
