@@ -15,8 +15,19 @@
 <div class="d-flex justify-content-between px-0 fw-bold">
     <h3>Property @ViewBag.PropertyName</h3>
     <div class="d-flex justify-content-between align-items-end">
-        <form asp-action="Search" method="get">
-            <input class="search me-2" type="text" placeholder="Search..." name="searchTerm" />
+        <form asp-action="Search" method="get" class="d-flex">
+            <span class="align-content-center me-1">Search by</span>
+            <select class="searchSelect form-select-sm me-2" name="searchBy">
+                <option value="all">All apartments</option>
+                <option value="bed">Number of bedrooms</option>
+                <option value="bath">Number of bathrooms</option>
+                <option value="pet">Pet Friendly</option>
+                <option value="size">Size</option>
+                <option value="price">Rent Price</option>
+            </select>
+            <input class="search me-2" required type="number" placeholder="Search..." name="searchTerm" />
+            <input class="searchFrom me-2" required type="number" placeholder="From" name="searchFrom" />
+            <input class="searchTo me-2" required type="number" placeholder="To" name="searchTo" />
             <input type="hidden" value=@ViewBag.PropertyId name="propertyId" />
             <input type="submit" value="Search" class="btnSearch" />
         </form>
@@ -69,27 +80,51 @@
         </div>
     }
 </div>
-<script>
-    let successMessage = "@(ViewBag.SuccessMessage)";
-    let errorMessage = "@(ViewBag.ErrorMessage)";
-    if (successMessage !== "") {
-
-        new Notify({
-            title: successMessage,
-            position: 'right top',
-            effect: 'slide',
-        })
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
 
     }
+    <script>
+        let successMessage = "@(ViewBag.SuccessMessage)";
+        let errorMessage = "@(ViewBag.ErrorMessage)";
+        if (successMessage !== "") {
 
-    if (errorMessage !== "") {
+            new Notify({
+                title: successMessage,
+                position: 'right top',
+                effect: 'slide',
+            })
 
-        new Notify({
-            status: 'error',
-            title: errorMessage,
-            position: 'right top',
-            effect: 'slide',
-        })
+        }
 
-    }
-</script>
+        if (errorMessage !== "") {
+
+            new Notify({
+                status: 'error',
+                title: errorMessage,
+                position: 'right top',
+                effect: 'slide',
+            })
+        }
+
+
+        $('.search, .searchFrom, .searchTo').hide().removeAttr('required');
+
+        $('.searchSelect').change(function () {
+            var selectedOption = $(this).val();
+            if (selectedOption === 'all' || selectedOption === 'pet') {
+                $('.search, .searchFrom, .searchTo').hide().removeAttr('required');
+
+            } else if (selectedOption === 'price') {
+                $('.search').hide().removeAttr('required');
+                $('.searchFrom, .searchTo').show().attr('required', 'required');
+            }
+            else {
+                $('.search').show().attr('required', 'required');
+
+            }
+        });
+    </script>
+}
+

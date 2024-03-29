@@ -185,25 +185,37 @@ namespace RentRight.Controllers
             return _context.Apartment.Any(e => e.Id == id);
         }
 
-        public async Task<IActionResult> Search(string searchTerm, int propertyId)
+        public async Task<IActionResult> Search(string searchTerm, int propertyId, string searchBy, string searchFrom, string searchTo)
         {
             var @property = await _context.Property.FirstOrDefaultAsync(u => u.Id == propertyId);
 
             var rentRightContext = _context.Apartment.Include(a => a.Property)
                                                      .Where(a => a.PropertyId == propertyId);
 
-            if (!string.IsNullOrEmpty(searchTerm))
+            switch (searchBy)
             {
-                rentRightContext = rentRightContext.Where(p => (p.Bedrooms.ToString().Contains(searchTerm) ||
-                                                                p.Bathrooms.ToString().Contains(searchTerm) ||
-                                                                p.Size.ToString().Contains(searchTerm) ||
-                                                                p.RentPrice.ToString().Contains(searchTerm)));
+                case "all":
+                    break;
+                case "bed":
+                    rentRightContext = rentRightContext.Where(p => (p.Bedrooms.ToString().Contains(searchTerm)));
+                    break;
+                case "bath":
+                    rentRightContext = rentRightContext.Where(p => (p.Bathrooms.ToString().Contains(searchTerm)));
+                    break;
+                case "pet":
+                    rentRightContext = rentRightContext.Where(p => (p.Pets));
+                    break;
+                case "size":
+                    rentRightContext = rentRightContext.Where(p => (p.Size.ToString().Contains(searchTerm)));
+                    break;
+                case "price":
+                    rentRightContext = rentRightContext.Where(p => (p.RentPrice >= Convert.ToDecimal(searchFrom) && p.RentPrice <= Convert.ToDecimal(searchTo)));
+                    break;
             }
 
             ViewBag.PropertyName = @property != null ? @property.Name : "Property not found";
             ViewBag.PropertyDescription = @property != null ? @property.Description : "Property not found";
             ViewBag.PropertyId = propertyId;
-
             return View("Index", await rentRightContext.ToListAsync());
         }
 
