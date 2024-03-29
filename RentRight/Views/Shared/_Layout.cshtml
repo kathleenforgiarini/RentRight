@@ -63,6 +63,14 @@
                                 </a>
                             </li>
                         }
+                        @if (type == TypeUsers.Manager.ToString() || type == TypeUsers.Owner.ToString())
+                        {
+                            <li class="nav-item mt-2">
+                                <a asp-controller="Rentals" asp-action="Index" class="nav-link px-sm-0 px-2 text-white text-decoration-none">
+                                    <i class="fas fa-file-contract"></i><span class="ms-3 d-none d-sm-inline">Rentals</span>
+                                </a>
+                            </li>
+                        }
                     </ul>
                     <div class="py-sm-4 mt-sm-auto ms-auto ms-sm-0 mb-4 flex-shrink-1 px-3">
                         <a asp-controller="Account" asp-action="Logout" class="d-flex align-items-center text-white text-decoration-none">

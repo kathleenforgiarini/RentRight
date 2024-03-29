@@ -16,6 +16,6 @@ namespace RentRight.Models
         public string Content { get; set; } = string.Empty;
         public int ApartmentId { get; set; }
         public virtual Apartment? Apartment { get; set; }
-        public DateTime SendDate { get; set; }
+        public DateTime SendDate { get; set; } = DateTime.UtcNow;
     }
 }

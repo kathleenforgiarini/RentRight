@@ -1,0 +1,61 @@
+﻿@model RentRight.Models.Rental
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<link rel="stylesheet" href="~/css/properties.css" asp-append-version="true" />
+
+<h1>Create a rental </h1>
+
+<div class="row d-flex justify-content-center mt-5">
+    <div class="col-md-6">
+        <form asp-action="Create" class="d-flex flex-column justify-content-center align-items-center">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="w-100 d-flex justify-content-between">
+                <div class="form-floating mt-3 col-5">
+                    <select asp-for="ApartmentId" class="form-select" required>
+                        <option value="">Select Apartment</option>
+                        @foreach (var apartment in ViewBag.Apartments)
+                        {
+                            <option value="@apartment.Id">@apartment.Id</option>
+                        }
+                    </select>
+                    <label asp-for="ApartmentId" class="control-label"></label>
+                    <span asp-validation-for="ApartmentId" class="text-danger"></span>
+                </div>
+                <div class="form-floating mt-3 col-5">
+                    <select asp-for="TenantId" class="form-select" required>
+                        <option value="">Select Tenant</option>
+                        @foreach (var tenant in ViewBag.Tenants)
+                        {
+                            <option value="@tenant.Id">@tenant.FirstName @tenant.LastName</option>
+                        }
+                    </select>
+                    <label asp-for="TenantId" class="control-label"></label>
+                    <span asp-validation-for="TenantId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="w-100 d-flex justify-content-between">
+                <div class="form-floating mt-3 col-5">
+                    <input asp-for="RentedDate" type="datetime-local" class="form-control" />
+                    <label asp-for="RentedDate" class="control-label"></label>
+                    <span asp-validation-for="RentedDate" class="text-danger"></span>
+                </div>
+                <div class="form-floating mt-3 col-5">
+                    <input asp-for="Months" type="number" class="form-control" />
+                    <label asp-for="Months" class="control-label"></label>
+                    <span asp-validation-for="Months" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group mt-5 w-100">
+                <input type="submit" value="Save" class="btnSave" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
