@@ -58,7 +58,7 @@
                         @if (type == TypeUsers.Manager.ToString() || type == TypeUsers.Tenant.ToString())
                         {
                             <li class="nav-item mt-2">
-                                <a href="#" class="nav-link px-sm-0 px-2 text-white text-decoration-none">
+                                <a asp-controller="Appointments" asp-action="Index" class="nav-link px-sm-0 px-2 text-white text-decoration-none">
                                     <i class="fas fa-calendar-day"></i><span class="ms-3 d-none d-sm-inline">Appointments</span>
                                 </a>
                             </li>

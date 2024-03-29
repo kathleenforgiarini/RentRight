@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RentRight.Data;
 
@@ -11,9 +12,11 @@ using RentRight.Data;
 namespace RentRight.Migrations
 {
     [DbContext(typeof(RentRightContext))]
-    partial class RentRightContextModelSnapshot : ModelSnapshot
+    [Migration("20240329211347_AddingManagerAvailabilityModel")]
+    partial class AddingManagerAvailabilityModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,40 +66,6 @@ namespace RentRight.Migrations
                     b.ToTable("Apartment");
                 });
 
-            modelBuilder.Entity("RentRight.Models.Appointments", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ApartmentId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("AppointmentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Confirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ManagerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TenantId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApartmentId");
-
-                    b.HasIndex("ManagerId");
-
-                    b.HasIndex("TenantId");
-
-                    b.ToTable("Appointments");
-                });
-
             modelBuilder.Entity("RentRight.Models.ManagerAvailability", b =>
                 {
                     b.Property<int>("Id")
@@ -105,9 +74,8 @@ namespace RentRight.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("DayOfTheWeek")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("DayOfTheWeek")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsScheduled")
                         .HasColumnType("bit");
@@ -301,33 +269,6 @@ namespace RentRight.Migrations
                         .IsRequired();
 
                     b.Navigation("Property");
-                });
-
-            modelBuilder.Entity("RentRight.Models.Appointments", b =>
-                {
-                    b.HasOne("RentRight.Models.Apartment", "Apartment")
-                        .WithMany()
-                        .HasForeignKey("ApartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RentRight.Models.User", "Manager")
-                        .WithMany()
-                        .HasForeignKey("ManagerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RentRight.Models.User", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Apartment");
-
-                    b.Navigation("Manager");
-
-                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("RentRight.Models.ManagerAvailability", b =>

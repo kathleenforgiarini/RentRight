@@ -16,6 +16,10 @@
   <ItemGroup>
     <Content Remove="Views\Apartments\Delete.cshtml" />
     <Content Remove="Views\Apartments\Details.cshtml" />
+    <Content Remove="Views\ManagerAvailabilities\Create.cshtml" />
+    <Content Remove="Views\ManagerAvailabilities\Delete.cshtml" />
+    <Content Remove="Views\ManagerAvailabilities\Details.cshtml" />
+    <Content Remove="Views\ManagerAvailabilities\Edit.cshtml" />
     <Content Remove="Views\Properties\Delete.cshtml" />
     <Content Remove="Views\Properties\Details.cshtml" />
     <Content Remove="Views\Rentals\Details.cshtml" />

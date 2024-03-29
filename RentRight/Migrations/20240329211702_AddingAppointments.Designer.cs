@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RentRight.Data;
 
@@ -11,9 +12,11 @@ using RentRight.Data;
 namespace RentRight.Migrations
 {
     [DbContext(typeof(RentRightContext))]
-    partial class RentRightContextModelSnapshot : ModelSnapshot
+    [Migration("20240329211702_AddingAppointments")]
+    partial class AddingAppointments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -105,9 +108,8 @@ namespace RentRight.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("DayOfTheWeek")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("DayOfTheWeek")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsScheduled")
                         .HasColumnType("bit");
