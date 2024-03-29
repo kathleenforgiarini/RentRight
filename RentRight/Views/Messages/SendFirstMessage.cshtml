@@ -69,10 +69,13 @@ else
             <div class="form-group mt-5 w-100">
                 <input type="submit" value="Save" class="btnSave" />
             </div>
-            <p class="fw-bold mt-3">OR</p>
-            <div class="form-group w-60">
-                <a class="btnSchedule">Schedule a visit</a>
-            </div>
+            @if (type == TypeUsers.Tenant.ToString())
+            {
+                <p class="fw-bold mt-3">OR</p>
+                <div class="form-group w-60">
+                    <a class="btnSchedule">Schedule a visit</a>
+                </div>
+            }
         </form>
     </div>
 </div>
