@@ -78,13 +78,10 @@ namespace RentRight.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ReceivedId")
+                    b.Property<int>("ReceiverId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ReceiverId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("SendDate")
+                    b.Property<DateTime?>("SendDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("SenderId")
@@ -254,7 +251,9 @@ namespace RentRight.Migrations
 
                     b.HasOne("RentRight.Models.User", "Receiver")
                         .WithMany()
-                        .HasForeignKey("ReceiverId");
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("RentRight.Models.User", "Sender")
                         .WithMany()

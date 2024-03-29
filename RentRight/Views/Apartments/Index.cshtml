@@ -76,9 +76,27 @@
                         }
                     </div>
                     <div class="d-flex justify-content-between mt-2 fw-bold px-6">
-                        <a asp-action="Contact" class="d-flex justify-content-between align-items-center btnContact ">
-                            <i class="fas fa-envelope me-2"></i>Contact
-                        </a>
+                        @if (type == TypeUsers.Tenant.ToString())
+                        {
+                            <form method="post" asp-action="SendFirstMessage" asp-controller="Messages">
+                                <input type="hidden" value="@item.Id" name="apartmentId" />
+                                <input type="hidden" value="@item.Property.ManagerId" name="receiverId" />
+                                <button type="submit" class="d-flex justify-content-between align-items-center btnContact">
+                                    <i class="fas fa-envelope me-2"></i>Contact
+                                </button>
+                            </form>
+                        }
+                        @if (type == TypeUsers.Manager.ToString())
+                        {
+                            <form method="post" asp-action="SendFirstMessage" asp-controller="Messages">
+                                <input type="hidden" value="@item.Id" name="apartmentId" />
+                                <input type="hidden" value="@item.Property.OwnerId" name="receiverId" />
+                                <button type="submit" class="d-flex justify-content-between align-items-center btnContact">
+                                    <i class="fas fa-envelope me-2"></i>Contact
+                                </button>
+                            </form>
+                        }
+
                         @if (type != TypeUsers.Tenant.ToString())
                         {
                             <p class="card-text align-content-center textStatus">@item.Status</p>

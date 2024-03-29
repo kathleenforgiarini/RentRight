@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RentRight.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class initialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -95,12 +95,11 @@ namespace RentRight.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SenderId = table.Column<int>(type: "int", nullable: false),
-                    ReceivedId = table.Column<int>(type: "int", nullable: false),
-                    ReceiverId = table.Column<int>(type: "int", nullable: true),
+                    ReceiverId = table.Column<int>(type: "int", nullable: false),
                     Topic = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ApartmentId = table.Column<int>(type: "int", nullable: false),
-                    SendDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    SendDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -115,10 +114,39 @@ namespace RentRight.Migrations
                         name: "FK_Message_User_ReceiverId",
                         column: x => x.ReceiverId,
                         principalTable: "User",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Message_User_SenderId",
                         column: x => x.SenderId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Rental",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ApartmentId = table.Column<int>(type: "int", nullable: false),
+                    TenantId = table.Column<int>(type: "int", nullable: false),
+                    RentedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Months = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Rental", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Rental_Apartment_ApartmentId",
+                        column: x => x.ApartmentId,
+                        principalTable: "Apartment",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Rental_User_TenantId",
+                        column: x => x.TenantId,
                         principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -158,6 +186,16 @@ namespace RentRight.Migrations
                 name: "IX_Property_OwnerId",
                 table: "Property",
                 column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rental_ApartmentId",
+                table: "Rental",
+                column: "ApartmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rental_TenantId",
+                table: "Rental",
+                column: "TenantId");
         }
 
         /// <inheritdoc />
@@ -165,6 +203,9 @@ namespace RentRight.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Message");
+
+            migrationBuilder.DropTable(
+                name: "Rental");
 
             migrationBuilder.DropTable(
                 name: "Apartment");

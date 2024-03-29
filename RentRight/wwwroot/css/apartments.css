@@ -91,9 +91,11 @@ a {
 }
 
 .btnEdit, .btnContact, .btnMeeting {
+    background-color: white;
     font-size: 14px;
     border: 1px solid #6d85bc;
     color: #6d85bc;
+    font-weight: bold;
     padding: 5px 10px;
     border-radius: 5px;
 }

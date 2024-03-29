@@ -1,0 +1,65 @@
+﻿@model IEnumerable<IGrouping<string, RentRight.Models.Message>>
+@using System.Security.Claims;
+
+@{
+    ViewData["Title"] = "Messages";
+    var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+}
+<link rel="stylesheet" href="~/css/messages.css" asp-append-version="true" />
+
+<h3 class="px-0">Messages</h3>
+
+<div class="row d-flex justify-content-center mt-5">
+    <div class="col-md-9">
+
+        @foreach (var group in Model)
+        {
+            @foreach (var item in group)
+            {
+                <div class="d-flex flex-column justify-content-center align-items-center mb-2">
+                    <div class="col w-100 messageCard">
+                        <a asp-action="ViewMessage" asp-controller="Messages" asp-route-messageTopic="@item.Topic">
+
+                            <div class="d-flex justify-content-between">
+                                @if (item.ReceiverId == userId)
+                                {
+                                    <p class="fw-bold">@item.Sender.FirstName @item.Sender.LastName </p>
+                                }
+                                else
+                                {
+                                    <p class="fw-bold">@item.Receiver.FirstName @item.Receiver.LastName </p>
+                                }
+                                <p class="text-muted"><small>@String.Format("{0:yyyy-MM-dd}", item.SendDate)</small></p>
+                            </div>
+                            <p class="text-muted mb-1"><strong>Topic:</strong> @item.Topic</p>
+                        </a>
+                    </div>
+
+                </div>
+            }
+           
+    }
+    </div>
+</div>
+<script>
+    let successMessage = "@(ViewBag.SuccessMessage)";
+    let errorMessage = "@(ViewBag.ErrorMessage)";
+    if (successMessage !== "") {
+
+        new Notify({
+            title: successMessage,
+            position: 'right top',
+            effect: 'slide',
+        })
+    }
+
+    if (errorMessage !== "") {
+
+        new Notify({
+            status: 'error',
+            title: errorMessage,
+            position: 'right top',
+            effect: 'slide',
+        })
+    }
+</script>

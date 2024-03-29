@@ -12,8 +12,8 @@ using RentRight.Data;
 namespace RentRight.Migrations
 {
     [DbContext(typeof(RentRightContext))]
-    [Migration("20240329143355_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240329175734_initialCreate")]
+    partial class initialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -81,13 +81,10 @@ namespace RentRight.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ReceivedId")
+                    b.Property<int>("ReceiverId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ReceiverId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("SendDate")
+                    b.Property<DateTime?>("SendDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("SenderId")
@@ -159,6 +156,35 @@ namespace RentRight.Migrations
                     b.ToTable("Property");
                 });
 
+            modelBuilder.Entity("RentRight.Models.Rental", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ApartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Months")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("RentedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApartmentId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("Rental");
+                });
+
             modelBuilder.Entity("RentRight.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -228,7 +254,9 @@ namespace RentRight.Migrations
 
                     b.HasOne("RentRight.Models.User", "Receiver")
                         .WithMany()
-                        .HasForeignKey("ReceiverId");
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("RentRight.Models.User", "Sender")
                         .WithMany()
@@ -260,6 +288,25 @@ namespace RentRight.Migrations
                     b.Navigation("Manager");
 
                     b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("RentRight.Models.Rental", b =>
+                {
+                    b.HasOne("RentRight.Models.Apartment", "Apartment")
+                        .WithMany()
+                        .HasForeignKey("ApartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RentRight.Models.User", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Apartment");
+
+                    b.Navigation("Tenant");
                 });
 #pragma warning restore 612, 618
         }
