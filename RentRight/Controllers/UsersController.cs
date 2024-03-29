@@ -111,12 +111,26 @@ namespace RentRight.Controllers
                         var emailExists = await _context.User.AnyAsync(u => u.Email == user.Email);
                         if (emailExists)
                         {
-                            TempData["ErrorMessage"] = "This e-mail already belongs to another user!";
-                            return RedirectToAction(nameof(Index));
+                            if (existingUser.Type != "Owner")
+                            {
+                                TempData["ErrorMessage"] = "Invalid e-mail, try again!";
+                                return RedirectToAction("Index", "Properties");
+                            }
+                            else
+                            {
+                                TempData["ErrorMessage"] = "This e-mail belongs to another user!";
+                                return RedirectToAction(nameof(Index));
+                            }
                         }
                     }
 
-                    _context.Update(user);
+                    existingUser.FirstName = user.FirstName;
+                    existingUser.LastName = user.LastName;
+                    existingUser.Email = user.Email;
+                    existingUser.Password = user.Password;
+                    existingUser.Type = user.Type;
+                    existingUser.IsActive = user.IsActive;
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -191,8 +205,8 @@ namespace RentRight.Controllers
                 }
                 catch (DbUpdateException)
                 {
-                    TempData["ErrorMessage"] = "You can not delete your account. There are properties registered for you!";
-                    return RedirectToAction("Index", "Home");
+                    TempData["ErrorMessage"] = "You can not delete this profile. There are properties related to this account!";
+                    return RedirectToAction(nameof(Index));
                 }
 
             }
@@ -215,6 +229,25 @@ namespace RentRight.Controllers
             }
 
             return View("Index", users.ToList());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteProfile(int id)
+        {
+            var user = await _context.User.FindAsync(id);
+            if (user != null)
+            {
+                var properties = await _context.Property.Where(p => p.ManagerId == id).ToListAsync();
+                if (properties.Count > 0)
+                {
+                    return StatusCode(500, "You can not delete your profile, you have properties related with your account!");
+                }
+                _context.User.Remove(user);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Account deleted!";
+                return StatusCode(200);
+            }
+            return StatusCode(500, "An error occurred while processing your request.");
         }
     }
 }

@@ -41,7 +41,12 @@
 
                 <div class="w-100 d-flex justify-content-between align-content-center">
                     <div class="form-floating mt-3 col-6">
-                    <select asp-for="Type" class="form-select" asp-items="Html.GetEnumSelectList<TypeUsers>()"></select>
+                    <select asp-for="Type" class="form-select">
+                        @foreach (var type in Enum.GetValues(typeof(TypeUsers)))
+                        {
+                            <option value="@type">@type</option>
+                        }
+                    </select>
                     <label asp-for="Type" class="control-label"></label>
                         <span asp-validation-for="Type" class="text-danger"></span>
                     </div>
