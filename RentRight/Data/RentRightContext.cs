@@ -18,6 +18,7 @@ namespace RentRight.Data
         public DbSet<RentRight.Models.User> User { get; set; } = default!;
         public DbSet<RentRight.Models.Property> Property { get; set; } = default!;
         public DbSet<RentRight.Models.Apartment> Apartment { get; set; } = default!;
+        public DbSet<RentRight.Models.Message> Message { get; set; } = default!;
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

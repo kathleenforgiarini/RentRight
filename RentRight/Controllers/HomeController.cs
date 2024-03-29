@@ -20,6 +20,7 @@ namespace RentRight.Controllers
             _logger = logger;
         }
 
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Index()
         {
             if (User.Identity?.IsAuthenticated == true)

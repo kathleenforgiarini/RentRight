@@ -24,6 +24,7 @@ namespace RentRight.Controllers
         }
 
         // GET: Apartments
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Index(int propertyId)
         {
             var @property = await _context.Property.FirstOrDefaultAsync(u => u.Id == propertyId);
@@ -166,7 +167,7 @@ namespace RentRight.Controllers
             return _context.Apartment.Any(e => e.Id == id);
         }
 
-        public async Task<IActionResult> Search(string searchTerm, int propertyId, string searchBy, string searchFrom, string searchTo)
+        public async Task<IActionResult> Search(string searchTerm, int propertyId, string searchBy, string searchFrom, string searchTo, string status)
         {
             var @property = await _context.Property.FirstOrDefaultAsync(u => u.Id == propertyId);
 
@@ -191,6 +192,9 @@ namespace RentRight.Controllers
                     break;
                 case "price":
                     rentRightContext = rentRightContext.Where(p => (p.RentPrice >= Convert.ToDecimal(searchFrom) && p.RentPrice <= Convert.ToDecimal(searchTo)));
+                    break;
+                case "status":
+                    rentRightContext = rentRightContext.Where(p => (p.Status == status));
                     break;
             }
 

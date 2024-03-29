@@ -24,12 +24,24 @@
                 <option value="pet">Pet Friendly</option>
                 <option value="size">Size</option>
                 <option value="price">Rent Price</option>
+                @if (type != TypeUsers.Tenant.ToString())
+                {
+                    <option value="status">Status</option>
+                }
+                
             </select>
             <input class="search me-2" required type="number" placeholder="Search..." name="searchTerm" />
             <input class="searchFrom me-2" required type="number" placeholder="From" name="searchFrom" />
             <input class="searchTo me-2" required type="number" placeholder="To" name="searchTo" />
             <input type="hidden" value=@ViewBag.PropertyId name="propertyId" />
+            <select name="status" class="form-select statusSelect me-2 status" required>
+                @foreach (var item in Enum.GetValues(typeof(ApartmentStatus)))
+                {
+                    <option value="@item">@item</option>
+                }
+            </select>
             <input type="submit" value="Search" class="btnSearch" />
+
         </form>
     </div>
 </div>
@@ -67,9 +79,15 @@
                         <a asp-action="Contact" class="d-flex justify-content-between align-items-center btnContact ">
                             <i class="fas fa-envelope me-2"></i>Contact
                         </a>
-                        <a asp-action="Contact" class="d-flex justify-content-between align-items-center btnMeeting">
-                            <i class="fas fa-calendar-day me-2"></i>Meeting
-                        </a>
+                        @if (type != TypeUsers.Tenant.ToString())
+                        {
+                            <p class="card-text align-content-center textStatus">@item.Status</p>
+                        } else
+                        {
+                            <a asp-action="Contact" class="d-flex justify-content-between align-items-center btnMeeting">
+                                <i class="fas fa-calendar-day me-2"></i>Meeting
+                            </a>
+                        }
                     </div>
                     @if (type != TypeUsers.Tenant.ToString())
                     {
@@ -109,20 +127,22 @@
         }
 
 
-        $('.search, .searchFrom, .searchTo').hide().removeAttr('required');
+        $('.search, .searchFrom, .searchTo, .status').hide().removeAttr('required');
 
         $('.searchSelect').change(function () {
             var selectedOption = $(this).val();
             if (selectedOption === 'all' || selectedOption === 'pet') {
-                $('.search, .searchFrom, .searchTo').hide().removeAttr('required');
+                $('.search, .searchFrom, .searchTo, .status').hide().removeAttr('required');
 
             } else if (selectedOption === 'price') {
                 $('.search').hide().removeAttr('required');
                 $('.searchFrom, .searchTo').show().attr('required', 'required');
             }
-            else {
-                $('.search').show().attr('required', 'required');
+            else if (selectedOption === 'status') {
+                $('.status').show().attr('required', 'required');
 
+            } else {
+                $('.search').show().attr('required', 'required');
             }
         });
     </script>

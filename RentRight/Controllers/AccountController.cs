@@ -14,7 +14,6 @@ namespace RentRight.Controllers
 {
     public class AccountController : Controller
     {
-
         private readonly RentRightContext _context;
         private readonly AuthService _authService;
 

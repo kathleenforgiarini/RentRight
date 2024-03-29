@@ -25,6 +25,7 @@ namespace RentRight.Controllers
 
         // GET: Users
         [Authorize (Policy = "RequireOwnerRole")]
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Index()
         {
             ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;

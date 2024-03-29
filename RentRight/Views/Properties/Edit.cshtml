@@ -62,7 +62,7 @@
                         <option value="">Select Owner</option>
                         @foreach (var owner in ViewBag.Owners)
                         {
-                            <option value="@owner.Id">@owner.FirstName</option>
+                            <option value="@owner.Id">@owner.FirstName @owner.LastName</option>
                         }
                     </select>
                     <label asp-for="OwnerId" class="control-label"></label>
@@ -73,7 +73,7 @@
                         <option value="">Select Manager</option>
                         @foreach (var manager in ViewBag.Managers)
                         {
-                            <option value="@manager.Id">@manager.FirstName</option>
+                            <option value="@manager.Id">@manager.FirstName @manager.LastName</option>
                         }
                     </select>
                     <label asp-for="ManagerId" class="control-label"></label>
