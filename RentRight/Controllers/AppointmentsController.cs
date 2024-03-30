@@ -87,14 +87,14 @@ namespace RentRight.Controllers
             var time = appointment.AppointmentDate.TimeOfDay;
 
             var managerAvailabilities = _context.ManagerAvailability
-                .Where(av => av.ManagerId == appointment.ManagerId && av.DayOfTheWeek == dayOfWeek && !av.IsScheduled)
+                .Where(av => av.ManagerId == appointment.ManagerId && av.DayOfTheWeek == dayOfWeek)
                 .ToList();
 
             var managerAvailability = managerAvailabilities.FirstOrDefault(av => av.Time == time);
 
             if (managerAvailability != null)
             {
-                managerAvailability.IsScheduled = true;
+               // managerAvailability.IsScheduled = true;
                 await _context.SaveChangesAsync();
             }
             TempData["SuccessMessage"] = "Appointment confirmed!";
@@ -120,7 +120,7 @@ namespace RentRight.Controllers
 
             if (managerAvailability != null)
             {
-                managerAvailability.IsScheduled = false;
+                //managerAvailability.IsScheduled = false;
                 await _context.SaveChangesAsync();
             }
 
@@ -142,12 +142,23 @@ namespace RentRight.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAvailableTimes(string dayOfWeek)
+        public IActionResult GetAvailableTimes(string day)
         {
+            DateTime selectedDate = DateTime.Parse(day);
+            DayOfWeek enumDayOfWeek = selectedDate.DayOfWeek;
+            string dayOfWeekString = enumDayOfWeek.ToString();
+
             var availableTimes = _context.ManagerAvailability
-                .Where(av => av.DayOfTheWeek == dayOfWeek && av.IsScheduled == false)
+                .Where(av => av.DayOfTheWeek == dayOfWeekString)
                 .Select(av => av.Time)
                 .ToList();
+
+            var scheduledAppointments = _context.Appointments
+                .Where(a => a.AppointmentDate.Date == selectedDate.Date && a.Status == AppointmentStatus.Confirmed.ToString())
+                .Select(appointment => appointment.AppointmentDate.TimeOfDay)
+                .ToList();
+
+            availableTimes.RemoveAll(time => scheduledAppointments.Contains(time));
 
             return Json(availableTimes);
         }

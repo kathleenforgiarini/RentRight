@@ -74,14 +74,11 @@
     <script>
         $('.date').change(function () {
             var selectedDate = $(this).val();
-            const date = new Date(selectedDate);
-            const dayOfWeek = date.getDay();
-            const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-            const dayName = daysOfWeek[dayOfWeek];
+
             $.ajax({
                 url: '/Appointments/GetAvailableTimes',
                 type: 'GET',
-                data: { dayOfWeek: dayName },
+                data: { day: selectedDate },
                 success: function (response) {
                     console.log('Available times:', response);
                     displayAvailableTimes(response);

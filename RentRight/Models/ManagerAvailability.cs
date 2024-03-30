@@ -12,7 +12,6 @@ namespace RentRight.Models
         public virtual User? Manager { get; set; }
         public string DayOfTheWeek { get; set; } = string.Empty;
         public TimeSpan Time {  get; set; } = DateTime.UtcNow.TimeOfDay;
-        public bool IsScheduled { get; set; } = false;
 
     }
 }
