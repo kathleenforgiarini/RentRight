@@ -26,7 +26,7 @@ namespace RentRight.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Index()
         {
-            var rentRightContext = _context.Rental.Include(r => r.Apartment).Include(r => r.Tenant).Include(r => r.Apartment.Property);
+            var rentRightContext = _context.Rental.Include(r => r.Property).Include(r => r.Tenant);
             ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
             ViewBag.ErrorMessage = TempData["ErrorMessage"] as string;
             return View(await rentRightContext.ToListAsync());
@@ -36,11 +36,18 @@ namespace RentRight.Controllers
         public async Task<IActionResult> Create()
         {
             List<User> tenants = await _context.User.Where(u => u.Type == TypeUsers.Tenant.ToString() && u.IsActive).ToListAsync();
-            ViewBag.Tenants = tenants;
+            List<Property> properties = await _context.Property.ToListAsync();
 
-            List<Apartment> apartments = await _context.Apartment.Where(u => u.Status == ApartmentStatus.Rented.ToString()).ToListAsync();
-            ViewBag.Apartments = apartments;
+            ViewBag.Tenants = tenants;
+            ViewBag.Properties = properties;
             return View();
+        }
+
+        [HttpGet]
+        public IActionResult GetApartmentsByPropertyId(int propertyId)
+        {
+            var apartments = _context.Apartment.Where(a => a.PropertyId == propertyId && a.Status == ApartmentStatus.Available.ToString()).ToList();
+            return Json(apartments);
         }
 
         // POST: Rentals/Create
@@ -48,14 +55,21 @@ namespace RentRight.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ApartmentId,TenantId,RentedDate,Months")] Rental rental)
+        public async Task<IActionResult> Create([Bind("PropertyId,ApartmentNumber,TenantId,RentedDate,Months")] Rental rental)
         {
             if (ModelState.IsValid)
             {
                 if (rental.RentedDate == null)
                 {
-                    rental.RentedDate = DateTime.UtcNow.Date;
+                    rental.RentedDate = DateTime.Now;
                 }
+                var rentalFound = await _context.Rental.FirstOrDefaultAsync(u => u.PropertyId == rental.PropertyId && u.ApartmentNumber == rental.ApartmentNumber);
+                if (rentalFound != null)
+                {
+                    TempData["ErrorMessage"] = "This rental is already registered!";
+                    return RedirectToAction(nameof(Index));
+                }
+
                 _context.Add(rental);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Rental inserted!";
@@ -77,16 +91,16 @@ namespace RentRight.Controllers
                 return NotFound();
             }
 
-            var rental = await _context.Rental.FindAsync(id);
+            var rental = await _context.Rental
+                .Include(r => r.Property)
+                .Include(r => r.Tenant)
+                .FirstOrDefaultAsync(r => r.Id == id);
+            
             if (rental == null)
             {
                 return NotFound();
             }
-            List<User> tenants = await _context.User.Where(u => u.Type == TypeUsers.Tenant.ToString() && u.IsActive).ToListAsync();
-            ViewBag.Tenants = tenants;
 
-            List<Apartment> apartments = await _context.Apartment.Where(u => u.Status == ApartmentStatus.Rented.ToString()).ToListAsync();
-            ViewBag.Apartments = apartments;
             return View(rental);
         }
 
@@ -95,38 +109,29 @@ namespace RentRight.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ApartmentId,TenantId,RentedDate,Months")] Rental rental)
+        public async Task<IActionResult> Edit(int id, string rentedDate, int months)
         {
-            if (id != rental.Id)
+            var rental = await _context.Rental.FirstOrDefaultAsync(r => r.Id == id);
+            if (rental == null)
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            
+            try
             {
-                try
-                {
-                    _context.Update(rental);
-                    TempData["SuccessMessage"] = "Rental updated!";
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!RentalExists(rental.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                rental.RentedDate = DateTime.Parse(rentedDate);
+                rental.Months = months;
+                _context.Update(rental);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Rental updated!";
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ApartmentId"] = new SelectList(_context.Apartment, "Id", "Id", rental.ApartmentId);
-            ViewData["TenantId"] = new SelectList(_context.User, "Id", "Id", rental.TenantId);
-            TempData["ErrorMessage"] = "Rental was not updated. Try again!";
-            return View(rental);
+            catch (DbUpdateConcurrencyException)
+            {
+                TempData["ErrorMessage"] = "Rental was not updated. Try again!";
+                return RedirectToAction(nameof(Index));
+            }
+
         }
 
         // GET: Rentals/Delete/5
@@ -138,7 +143,7 @@ namespace RentRight.Controllers
             }
 
             var rental = await _context.Rental
-                .Include(r => r.Apartment)
+                .Include(r => r.Property)
                 .Include(r => r.Tenant)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (rental == null)

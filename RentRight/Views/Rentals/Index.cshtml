@@ -19,7 +19,7 @@
                 Property
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Apartment.Number)
+                @Html.DisplayNameFor(model => model.ApartmentNumber)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Tenant)
@@ -37,10 +37,10 @@
 @foreach (var item in Model) {
         <tr>
             <td class="align-content-center">
-               @item.Apartment.Property.Name
+                    @item.ApartmentNumber
             </td>
             <td class="align-content-center">
-                @Html.DisplayFor(modelItem => item.Apartment.Number)
+                    @Html.DisplayFor(modelItem => item.ApartmentNumber)
             </td>
             <td class="align-content-center">
                 @item.Tenant.FirstName @item.Tenant.LastName

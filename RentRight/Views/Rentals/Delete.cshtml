@@ -11,27 +11,33 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Apartment)
+            @Html.DisplayNameFor(model => model.PropertyId)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Apartment.Id)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Property.Name)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Tenant)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ApartmentNumber)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Tenant.Id)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ApartmentNumber)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TenantId)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Tenant.FirstName @Model.Tenant.LastName
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.RentedDate)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.RentedDate)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Months)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Months)
         </dd>
     </dl>

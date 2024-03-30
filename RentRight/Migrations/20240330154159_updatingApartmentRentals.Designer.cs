@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RentRight.Data;
 
@@ -11,9 +12,11 @@ using RentRight.Data;
 namespace RentRight.Migrations
 {
     [DbContext(typeof(RentRightContext))]
-    partial class RentRightContextModelSnapshot : ModelSnapshot
+    [Migration("20240330154159_updatingApartmentRentals")]
+    partial class updatingApartmentRentals
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -224,6 +227,9 @@ namespace RentRight.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("ApartmentId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ApartmentNumber")
                         .HasColumnType("int");
 
@@ -240,6 +246,8 @@ namespace RentRight.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApartmentId");
 
                     b.HasIndex("PropertyId");
 
@@ -393,6 +401,10 @@ namespace RentRight.Migrations
 
             modelBuilder.Entity("RentRight.Models.Rental", b =>
                 {
+                    b.HasOne("RentRight.Models.Apartment", "Apartment")
+                        .WithMany()
+                        .HasForeignKey("ApartmentId");
+
                     b.HasOne("RentRight.Models.Property", "Property")
                         .WithMany()
                         .HasForeignKey("PropertyId")
@@ -404,6 +416,8 @@ namespace RentRight.Migrations
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Apartment");
 
                     b.Navigation("Property");
 

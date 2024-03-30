@@ -9,14 +9,16 @@ namespace RentRight.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        [DisplayName("Apartment Id")]
-        public int ApartmentId { get; set; }
-        public virtual Apartment? Apartment { get; set; }
+        [DisplayName("Property")]
+        public int PropertyId { get; set; }
+        public virtual Property? Property { get; set; }
+        [DisplayName("Apartment Number")]
+        public int ApartmentNumber { get; set; }
         [DisplayName("Tenant")]
         public int TenantId { get; set; }
         public virtual User? Tenant { get; set; }
         [DisplayName("Rented Date")]
-        public DateTime? RentedDate { get; set; } = DateTime.UtcNow.Date;
+        public DateTime? RentedDate { get; set; } = DateTime.Now;
         [DisplayName("Number of months")]
         public int Months { get; set; }
     }
