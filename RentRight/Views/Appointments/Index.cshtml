@@ -37,11 +37,11 @@
                         
                         @if (item.Status == AppointmentStatus.Pending.ToString())
                         {
-                            <p class="m-0"><small>Waiting for confirmation</small></p>
+                            <p class="m-0" style="color:#6d85bc"><small>Waiting for confirmation</small></p>
                         }
                         else
                         {
-                            <p class="m-0"><small>@item.Status</small></p>
+                            <p class="m-0 @item.Status"><small>@item.Status</small></p>
                         }
 
                     </div>

@@ -95,3 +95,10 @@ a {
     font-size: 28px;
     font-weight: bold;
 }
+
+.Canceled{
+    color: red;
+}
+.Confirmed{
+    color: darkgreen;
+}
