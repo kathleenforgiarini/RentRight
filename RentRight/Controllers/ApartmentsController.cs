@@ -54,7 +54,7 @@ namespace RentRight.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "RequireOwnerOrManagerRole")]
-        public async Task<IActionResult> Create([Bind("Number,Bedrooms,Bathrooms,Pets,Size,PropertyId,RentPrice,PhotoFile,Status")] Apartment apartment)
+        public async Task<IActionResult> Create([Bind("Number,Bedrooms,Bathrooms,Pets,Size,PropertyId,RentPrice,PhotoFile")] Apartment apartment)
         {
             if (apartment.PhotoFile != null && apartment.PhotoFile.Length > 0)
             {
@@ -160,6 +160,12 @@ namespace RentRight.Controllers
             var apartment = await _context.Apartment.FindAsync(id);
             if (apartment != null)
             {
+                var rentalFound = await _context.Rental.FirstOrDefaultAsync(u => u.PropertyId == apartment.PropertyId && u.ApartmentNumber == apartment.Number);
+                if (rentalFound != null)
+                {
+                    return StatusCode(500, "You canot delete this apartment, there is a rental related to it.");
+                }
+
                 _context.Apartment.Remove(apartment);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Apartment deleted!";

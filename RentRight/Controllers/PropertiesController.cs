@@ -166,10 +166,18 @@ namespace RentRight.Controllers
                 {
                     return StatusCode(500, "You canot delete this property, there are apartments related to it.");
                 }
-                _context.Property.Remove(@property);
-                await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Property deleted!";
-                return StatusCode(200);
+                try
+                {
+                    _context.Property.Remove(@property);
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Property deleted!";
+                    return StatusCode(200);
+                }
+                catch (DbUpdateException ex)
+                {
+                    return StatusCode(500, "You canot delete this property, there are rentals related to it!");
+                }
+
             }
             return StatusCode(500, "An error occurred while processing your request.");
         }

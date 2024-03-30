@@ -72,6 +72,14 @@ namespace RentRight.Controllers
 
                 _context.Add(rental);
                 await _context.SaveChangesAsync();
+
+                var apartmentFound = await _context.Apartment.FirstOrDefaultAsync(u => u.PropertyId == rental.PropertyId && u.Number == rental.ApartmentNumber);
+                if (apartmentFound != null)
+                {
+                    apartmentFound.Status = ApartmentStatus.Rented.ToString();
+                    await _context.SaveChangesAsync();
+                }
+
                 TempData["SuccessMessage"] = "Rental inserted!";
                 return RedirectToAction(nameof(Index));
             }
@@ -163,6 +171,12 @@ namespace RentRight.Controllers
             if (rental != null)
             {
                 _context.Rental.Remove(rental);
+                var apartmentFound = await _context.Apartment.FirstOrDefaultAsync(u => u.PropertyId == rental.PropertyId && u.Number == rental.ApartmentNumber);
+                if (apartmentFound != null)
+                {
+                    apartmentFound.Status = ApartmentStatus.Available.ToString();
+                    await _context.SaveChangesAsync();
+                }
             }
 
             await _context.SaveChangesAsync();
