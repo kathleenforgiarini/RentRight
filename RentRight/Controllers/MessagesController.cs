@@ -69,7 +69,7 @@ namespace RentRight.Controllers
         {
             if (ModelState.IsValid)
             {
-                message.SendDate = DateTime.UtcNow.Date;
+                message.SendDate = DateTime.Now;
                 _context.Add(message);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Message sent!";
@@ -116,7 +116,7 @@ namespace RentRight.Controllers
             message.ApartmentId = apartmentId;
             message.Content = content;
             message.Topic = topic;
-            message.SendDate = DateTime.UtcNow.Date;
+            message.SendDate = DateTime.Now;
 
             try
             {
@@ -130,74 +130,6 @@ namespace RentRight.Controllers
                 TempData["ErrorMessage"] = "Message could not be sent. Try again!";
                 return RedirectToAction("Index");
             }
-        }
-
-       
-        // GET: Messages/Create
-        public IActionResult Create()
-        {
-            ViewData["ApartmentId"] = new SelectList(_context.Apartment, "Id", "Id");
-            ViewData["SenderId"] = new SelectList(_context.User, "Id", "Id");
-            return View();
-        }
-
-        // POST: Messages/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SenderId,ReceivedId,Topic,Content,ApartmentId,SendDate")] Models.Message message)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(message);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["ApartmentId"] = new SelectList(_context.Apartment, "Id", "Id", message.ApartmentId);
-            ViewData["SenderId"] = new SelectList(_context.User, "Id", "Id", message.SenderId);
-            return View(message);
-        }
-
-       
-        // GET: Messages/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var message = await _context.Message
-                .Include(m => m.Apartment)
-                .Include(m => m.Sender)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (message == null)
-            {
-                return NotFound();
-            }
-
-            return View(message);
-        }
-
-        // POST: Messages/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var message = await _context.Message.FindAsync(id);
-            if (message != null)
-            {
-                _context.Message.Remove(message);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool MessageExists(int id)
-        {
-            return _context.Message.Any(e => e.Id == id);
         }
     }
 }

@@ -18,10 +18,15 @@ namespace RentRight.Controllers
     public class PropertiesController : Controller
     {
         private readonly RentRightContext _context;
+        private List<User> owners;
+        private List<User> managers;
 
         public PropertiesController(RentRightContext context)
         {
             _context = context;
+            this.owners = _context.User.Where(u => u.Type == TypeUsers.Owner.ToString() && u.IsActive).ToList();
+            this.managers = _context.User.Where(u => u.Type == TypeUsers.Manager.ToString() && u.IsActive).ToList();
+
         }
 
         // GET: Properties
@@ -33,15 +38,12 @@ namespace RentRight.Controllers
             return View(await _context.Property.ToListAsync());
         }
 
-
         // GET: Properties/Create
         [Authorize(Policy = "RequireOwnerOrManagerRole")]
         public async Task<IActionResult> Create()
         {
-            List<User> owners = await _context.User.Where(u => u.Type == TypeUsers.Owner.ToString() && u.IsActive).ToListAsync();
-            List<User> managers = await _context.User.Where(u => u.Type == TypeUsers.Manager.ToString() && u.IsActive).ToListAsync();
-            ViewBag.Managers = managers;
-            ViewBag.Owners = owners;
+            ViewBag.Managers = this.managers;
+            ViewBag.Owners = this.owners;
             return View();
         }
 
@@ -63,8 +65,8 @@ namespace RentRight.Controllers
             }
             if (!ModelState.IsValid)
             {
-                List<User> owners = await _context.User.Where(u => u.Type == TypeUsers.Owner.ToString() && u.IsActive).ToListAsync();
-                List<User> managers = await _context.User.Where(u => u.Type == TypeUsers.Manager.ToString() && u.IsActive).ToListAsync();
+                ViewBag.Managers = this.managers;
+                ViewBag.Owners = this.owners;
                 ViewBag.Managers = managers;
                 ViewBag.Owners = owners;
                 return View(property);
@@ -92,8 +94,8 @@ namespace RentRight.Controllers
             {
                 return NotFound();
             }
-            List<User> owners = await _context.User.Where(u => u.Type == TypeUsers.Owner.ToString() && u.IsActive).ToListAsync();
-            List<User> managers = await _context.User.Where(u => u.Type == TypeUsers.Manager.ToString() && u.IsActive).ToListAsync();
+            ViewBag.Managers = this.managers;
+            ViewBag.Owners = this.owners;
             ViewBag.Managers = managers;
             ViewBag.Owners = owners;
 
@@ -143,8 +145,8 @@ namespace RentRight.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            List<User> owners = await _context.User.Where(u => u.Type == TypeUsers.Owner.ToString() && u.IsActive).ToListAsync();
-            List<User> managers = await _context.User.Where(u => u.Type == TypeUsers.Manager.ToString() && u.IsActive).ToListAsync();
+            ViewBag.Managers = this.managers;
+            ViewBag.Owners = this.owners;
             ViewBag.Managers = managers;
             ViewBag.Owners = owners;
             return View(@property);
