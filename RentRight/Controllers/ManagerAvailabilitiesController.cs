@@ -44,11 +44,19 @@ namespace RentRight.Controllers
 
             ManagerAvailability managerAvailability = new ManagerAvailability();
             managerAvailability.DayOfTheWeek = day;
-            managerAvailability.Time = TimeSpan.ParseExact(time, @"hh\:mm", CultureInfo.InvariantCulture);
+            TimeSpan timespan = TimeSpan.ParseExact(time, @"hh\:mm", CultureInfo.InvariantCulture);
+            managerAvailability.Time = timespan;
             managerAvailability.ManagerId = userId;
 
             if (ModelState.IsValid)
             {
+                var availabilityFound = await _context.ManagerAvailability.FirstOrDefaultAsync(u => u.DayOfTheWeek == day && u.Time == timespan && u.ManagerId == userId);
+                if (availabilityFound != null)
+                {
+                    TempData["ErrorMessage"] = "This slot is already registered!";
+                    return RedirectToAction(nameof(Index));
+                }
+
                 _context.Add(managerAvailability);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Slot created!";
