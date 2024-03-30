@@ -54,7 +54,7 @@ namespace RentRight.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "RequireOwnerOrManagerRole")]
-        public async Task<IActionResult> Create([Bind("Bedrooms,Bathrooms,Pets,Size,PropertyId,RentPrice,PhotoFile,Status")] Apartment apartment)
+        public async Task<IActionResult> Create([Bind("Number,Bedrooms,Bathrooms,Pets,Size,PropertyId,RentPrice,PhotoFile,Status")] Apartment apartment)
         {
             if (apartment.PhotoFile != null && apartment.PhotoFile.Length > 0)
             {
@@ -67,13 +67,20 @@ namespace RentRight.Controllers
 
             if (ModelState.IsValid)
             {
+                var apartmentFound = await _context.Apartment.FirstOrDefaultAsync(u => u.Number == apartment.Number && u.PropertyId == apartment.PropertyId);
+                if (apartmentFound != null)
+                {
+                    TempData["ErrorMessage"] = "This apartment number already exists!";
+                    return RedirectToAction("Index", new { propertyId = apartment.PropertyId });
+                }
+
                 _context.Add(apartment);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Apartment created!";
                 return RedirectToAction("Index", new { propertyId = apartment.PropertyId });
             }
             ViewBag.PropertyId = apartment.PropertyId;
-            TempData["ErrorMessage"] = "Property was not created. Try again!";
+            TempData["ErrorMessage"] = "Apartment was not created. Try again!";
             return View(apartment);
         }
 
@@ -101,7 +108,7 @@ namespace RentRight.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "RequireOwnerOrManagerRole")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Bedrooms,Bathrooms,Pets,Size,PropertyId,RentPrice,Photo,PhotoFile,Status")] Apartment apartment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Number,Bedrooms,Bathrooms,Pets,Size,PropertyId,RentPrice,Photo,PhotoFile,Status")] Apartment apartment)
         {
             if (id != apartment.Id)
             {
