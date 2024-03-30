@@ -102,9 +102,13 @@
                             <p class="card-text align-content-center textStatus">@item.Status</p>
                         } else
                         {
-                            <a asp-action="Contact" class="d-flex justify-content-between align-items-center btnMeeting">
-                                <i class="fas fa-calendar-day me-2"></i>Meeting
-                            </a>
+                            <form method="post" asp-action="CreateAppointment" asp-controller="Appointments">
+                                <input type="hidden" value="@item.Id" name="apartmentId" />
+                                <input type="hidden" value="@item.Property.ManagerId" name="managerId" />
+                                <button type="submit" class="d-flex justify-content-between align-items-center btnContact">
+                                    <i class="fas fa-calendar-day me-2"></i>Meeting
+                                </button>
+                            </form>
                         }
                     </div>
                     @if (type != TypeUsers.Tenant.ToString())

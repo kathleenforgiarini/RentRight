@@ -33,3 +33,64 @@ a {
     .btnSave:hover {
         transform: scale(1.01);
     }
+
+.btnMessage {
+    border: 1px solid #6d85bc;
+    border-radius: 5px;
+    width: 40%;
+    align-content: center;
+    align-self: center;
+    color: #6d85bc;
+    font-weight: bold;
+    background-color: white;
+}
+
+    .btnMessage:hover {
+        color: #6d85bc;
+        border: 2px solid #6d85bc;
+        cursor: pointer;
+    }
+
+
+.timeSlotsList {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.timeSlot {
+    display: inline-block;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+    text-align: center;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+    .timeSlot.selected {
+        background-color: #6d85bc;
+        color: #fff;
+    }
+
+
+.appointmentCard {
+    background-color: #DEE4EF;
+    padding: 5px 15px;
+    border-radius: 10px;
+}
+
+.deleteAppointment{
+    background-color: transparent;
+    border: none;
+    color: red;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.confirmAppointment {
+    background-color: transparent;
+    border: none;
+    color: #6d85bc;
+    font-size: 28px;
+    font-weight: bold;
+}

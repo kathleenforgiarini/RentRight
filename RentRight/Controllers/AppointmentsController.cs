@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RentRight.Data;
 using RentRight.Models;
+using RentRight.Models.Enums;
 
 namespace RentRight.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "RequireTenantOrManagerRole")]
     public class AppointmentsController : Controller
     {
         private readonly RentRightContext _context;
@@ -22,39 +26,23 @@ namespace RentRight.Controllers
         }
 
         // GET: Appointments
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Index()
         {
-            var rentRightContext = _context.Appointments.Include(a => a.Apartment).Include(a => a.Manager).Include(a => a.Tenant);
+            var rentRightContext = _context.Appointments.Include(a => a.Apartment).Include(a => a.Apartment.Property).Include(a => a.Manager).Include(a => a.Tenant);
+            ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
+            ViewBag.ErrorMessage = TempData["ErrorMessage"] as string;
             return View(await rentRightContext.ToListAsync());
         }
 
-        // GET: Appointments/Details/5
-        public async Task<IActionResult> Details(int? id)
+        [HttpPost]
+        public async Task<IActionResult> CreateAppointment (int apartmentId, int managerId)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var appointments = await _context.Appointments
-                .Include(a => a.Apartment)
-                .Include(a => a.Manager)
-                .Include(a => a.Tenant)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (appointments == null)
-            {
-                return NotFound();
-            }
-
-            return View(appointments);
-        }
-
-        // GET: Appointments/Create
-        public IActionResult Create()
-        {
-            ViewData["ApartmentId"] = new SelectList(_context.Apartment, "Id", "Id");
-            ViewData["ManagerId"] = new SelectList(_context.User, "Id", "Id");
-            ViewData["TenantId"] = new SelectList(_context.User, "Id", "Id");
+            var apartment = await _context.Apartment
+                                .Include(a => a.Property)
+                                .FirstOrDefaultAsync(a => a.Id == apartmentId);
+            ViewBag.Apartment = apartment;
+            ViewBag.ManagerId = managerId;
             return View();
         }
 
@@ -63,116 +51,105 @@ namespace RentRight.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,TenantId,ManagerId,ApartmentId,AppointmentDate,Confirmed")] Appointments appointments)
+        public async Task<IActionResult> Create(int apartmentId, int managerId, string selectedTime, string date)
         {
+            Appointments appointments = new Appointments();
+            appointments.ApartmentId = apartmentId;
+            appointments.ManagerId = managerId;
+            String dateTimeString = date + " " + selectedTime;
+            DateTime dateTime = DateTime.ParseExact(dateTimeString, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
+            appointments.AppointmentDate = dateTime;
+            var tenantId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            appointments.TenantId = tenantId;
+
             if (ModelState.IsValid)
             {
                 _context.Add(appointments);
                 await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Visit scheduled!";
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ApartmentId"] = new SelectList(_context.Apartment, "Id", "Id", appointments.ApartmentId);
-            ViewData["ManagerId"] = new SelectList(_context.User, "Id", "Id", appointments.ManagerId);
-            ViewData["TenantId"] = new SelectList(_context.User, "Id", "Id", appointments.TenantId);
-            return View(appointments);
+
+            return RedirectToAction("CreateAppointment");
         }
 
-        // GET: Appointments/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var appointments = await _context.Appointments.FindAsync(id);
-            if (appointments == null)
-            {
-                return NotFound();
-            }
-            ViewData["ApartmentId"] = new SelectList(_context.Apartment, "Id", "Id", appointments.ApartmentId);
-            ViewData["ManagerId"] = new SelectList(_context.User, "Id", "Id", appointments.ManagerId);
-            ViewData["TenantId"] = new SelectList(_context.User, "Id", "Id", appointments.TenantId);
-            return View(appointments);
-        }
-
-        // POST: Appointments/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,TenantId,ManagerId,ApartmentId,AppointmentDate,Confirmed")] Appointments appointments)
+        public async Task<IActionResult> ConfirmAppointment(int appointmentId)
         {
-            if (id != appointments.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(appointments);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AppointmentsExists(appointments.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["ApartmentId"] = new SelectList(_context.Apartment, "Id", "Id", appointments.ApartmentId);
-            ViewData["ManagerId"] = new SelectList(_context.User, "Id", "Id", appointments.ManagerId);
-            ViewData["TenantId"] = new SelectList(_context.User, "Id", "Id", appointments.TenantId);
-            return View(appointments);
-        }
-
-        // GET: Appointments/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var appointments = await _context.Appointments
-                .Include(a => a.Apartment)
-                .Include(a => a.Manager)
-                .Include(a => a.Tenant)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (appointments == null)
-            {
-                return NotFound();
-            }
-
-            return View(appointments);
-        }
-
-        // POST: Appointments/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var appointments = await _context.Appointments.FindAsync(id);
-            if (appointments != null)
-            {
-                _context.Appointments.Remove(appointments);
-            }
-
+            var appointment = await _context.Appointments
+                                .FirstOrDefaultAsync(a => a.Id == appointmentId);
+            appointment.Status = AppointmentStatus.Confirmed.ToString();
             await _context.SaveChangesAsync();
+
+            var dayOfWeek = appointment.AppointmentDate.DayOfWeek.ToString();
+            var time = appointment.AppointmentDate.TimeOfDay;
+
+            var managerAvailabilities = _context.ManagerAvailability
+                .Where(av => av.ManagerId == appointment.ManagerId && av.DayOfTheWeek == dayOfWeek && !av.IsScheduled)
+                .ToList();
+
+            var managerAvailability = managerAvailabilities.FirstOrDefault(av => av.Time == time);
+
+            if (managerAvailability != null)
+            {
+                managerAvailability.IsScheduled = true;
+                await _context.SaveChangesAsync();
+            }
+            TempData["SuccessMessage"] = "Appointment confirmed!";
             return RedirectToAction(nameof(Index));
+
         }
 
-        private bool AppointmentsExists(int id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CancelAppointment(int appointmentId)
         {
-            return _context.Appointments.Any(e => e.Id == id);
+            var appointment = await _context.Appointments
+                                .FirstOrDefaultAsync(a => a.Id == appointmentId);
+
+            var dayOfWeek = appointment.AppointmentDate.DayOfWeek.ToString();
+            var time = appointment.AppointmentDate.TimeOfDay;
+
+            var managerAvailabilities = _context.ManagerAvailability
+                .Where(av => av.ManagerId == appointment.ManagerId && av.DayOfTheWeek == dayOfWeek)
+                .ToList();
+
+            var managerAvailability = managerAvailabilities.FirstOrDefault(av => av.Time == time);
+
+            if (managerAvailability != null)
+            {
+                managerAvailability.IsScheduled = false;
+                await _context.SaveChangesAsync();
+            }
+
+            if (appointment.Status == AppointmentStatus.Canceled.ToString())
+            {
+                _context.Appointments.Remove(appointment);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Appointment deleted!";
+                return RedirectToAction(nameof(Index));
+
+            }
+
+            TempData["SuccessMessage"] = "Appointment canceled!";
+            appointment.Status = AppointmentStatus.Canceled.ToString();
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+
+        }
+
+        [HttpGet]
+        public IActionResult GetAvailableTimes(string dayOfWeek)
+        {
+            var availableTimes = _context.ManagerAvailability
+                .Where(av => av.DayOfTheWeek == dayOfWeek && av.IsScheduled == false)
+                .Select(av => av.Time)
+                .ToList();
+
+            return Json(availableTimes);
         }
     }
 }

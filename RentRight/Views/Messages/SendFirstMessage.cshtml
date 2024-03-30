@@ -69,14 +69,21 @@ else
             <div class="form-group mt-5 w-100">
                 <input type="submit" value="Save" class="btnSave" />
             </div>
-            @if (type == TypeUsers.Tenant.ToString())
-            {
-                <p class="fw-bold mt-3">OR</p>
-                <div class="form-group w-60">
-                    <a class="btnSchedule">Schedule a visit</a>
-                </div>
-            }
+
         </form>
+        @if (type == TypeUsers.Tenant.ToString())
+        {
+            <div class="form-group d-flex flex-column justify-content-center align-items-center w-100">
+                <p class="fw-bold mt-3">OR</p>
+                <form method="post" asp-action="CreateAppointment" asp-controller="Appointments">
+                    <input type="hidden" value="@apartment.Id" name="apartmentId" />
+                    <input type="hidden" value="@apartment.Property.ManagerId" name="managerId" />
+                    <button type="submit" class="d-flex justify-content-between align-items-center btnSchedule">
+                        Schedule a visit
+                    </button>
+                </form>
+            </div>
+        }
     </div>
 </div>
 

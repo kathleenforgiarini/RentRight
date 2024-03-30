@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using RentRight.Models.Enums;
 
 namespace RentRight.Models
 {
@@ -15,6 +16,6 @@ namespace RentRight.Models
         public int ApartmentId { get; set; }
         public virtual Apartment? Apartment { get; set; }
         public DateTime AppointmentDate { get; set; }
-        public bool Confirmed { get; set; } = false;
+        public string Status { get; set; } = AppointmentStatus.Pending.ToString();
     }
 }

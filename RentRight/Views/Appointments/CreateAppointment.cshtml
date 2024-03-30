@@ -1,0 +1,145 @@
+﻿@model RentRight.Models.Appointments
+@using RentRight.Models.Enums
+
+@{
+    ViewData["Title"] = "CreateAppointment";
+    var apartment = ViewBag.Apartment;
+    var managerId = ViewBag.ManagerId;
+    var daysOfWeek = Enum.GetNames(typeof(DayOfTheWeek));
+}
+
+<link rel="stylesheet" href="~/css/appointments.css" asp-append-version="true" />
+
+<h1>Schedule a visit</h1>
+
+<div class="row d-flex justify-content-center mt-5">
+    <div class="col-md-8">
+        <div class="mb-3">
+            <div class="row g-0 justify-content-center">
+                <div class="col-md-3">
+                    <img src="data:image;base64,@Convert.ToBase64String(apartment.Photo)" alt="Apartment Photo" class="img-fluid rounded-start">
+                </div>
+                <div class="col-md-5" style="background-color:#DEE4EF">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between">
+                            <h5 class="card-title apPrice">$@apartment.RentPrice</h5>
+                            <p class="card-text"><small class="text-muted">@apartment.Size ft²</small></p>
+                        </div>
+                        <p class="card-text fw-bold mb-1">@apartment.Bedrooms Bed</p>
+                        <p class="card-text fw-bold mb-1">@apartment.Bathrooms Bath</p>
+                        @if (apartment.Pets)
+                        {
+                            <p class="card-text fw-bold">Pet Friendly</p>
+                        }
+                        <p class="card-text"><small class="text-muted">@apartment.Property.StNumber, @apartment.Property.Street - @apartment.Property.City, QC</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form asp-action="Create" class="formCreate d-flex flex-column justify-content-center align-items-center">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="ApartmentId" value="@apartment.Id" type="hidden" />
+            <input asp-for="ManagerId" value="@managerId" type="hidden" />
+            <input type="hidden" id="selectedTime" name="selectedTime" />
+
+            <div class="w-100 d-flex justify-content-center">
+                <div class="form-floating mt-3 col-5">
+                    <input type="date" name="date" class="form-control date" required />
+                    <label class="control-label">Select a date</label>
+                </div>
+            </div>
+            <div id="timeSlotsContainer" class="mt-3 w-100 d-flex flex-column align-items-center"></div>
+            <div class="form-group mt-4 w-100">
+                <input type="submit" value="Save" class="btnSave" />
+            </div>
+            <p class="fw-bold mt-3">OR</p>
+
+        </form>
+        <div class="form-group w-100">
+            <form method="post" class="d-flex justify-content-center" asp-action="SendFirstMessage" asp-controller="Messages">
+                <input type="hidden" value="@apartment.Id" name="apartmentId" />
+                <input type="hidden" value="@apartment.Property.OwnerId" name="receiverId" />
+                <button type="submit" class="btnMessage">
+                    Contact the manager
+                </button>
+            </form>
+        </div>
+       
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $('.date').change(function () {
+            var selectedDate = $(this).val();
+            const date = new Date(selectedDate);
+            const dayOfWeek = date.getDay();
+            const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            const dayName = daysOfWeek[dayOfWeek];
+            $.ajax({
+                url: '/Appointments/GetAvailableTimes',
+                type: 'GET',
+                data: { dayOfWeek: dayName },
+                success: function (response) {
+                    console.log('Available times:', response);
+                    displayAvailableTimes(response);
+
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+
+        });
+        function displayAvailableTimes(times) {
+            var timeSlotsContainer = $('#timeSlotsContainer');
+            timeSlotsContainer.empty();
+            if (times.length === 0) {
+                var selectText = $('<p class="fw-bold">No availability. Please select another day</p>').appendTo(timeSlotsContainer);
+            }
+            else {
+                var selectText = $('<p class="fw-bold">Select a time slot</p>').appendTo(timeSlotsContainer);
+            }
+            var timeSlotsList = $('<div class="timeSlotsList"></div>').appendTo(timeSlotsContainer);
+            times.forEach(function (time) {
+                var timeString = formatTime(time);
+                var timeSlot = $('<div class="timeSlot"></div>').text(timeString); 
+                timeSlot.click(function () {
+                    $('.timeSlot').removeClass('selected');
+                    $(this).addClass('selected');
+                    $('#selectedTime').val($(this).text());
+                });
+                timeSlotsList.append(timeSlot);
+            });
+        }
+        function formatTime(time) {
+            var hours = time.split(':')[0];
+            var minutes = time.split(':')[1];
+            return hours + ':' + minutes;
+        }
+
+
+        $('.btnSave').click(function () {
+            if ($('.date').val() === '') {
+                new Notify({
+                    status: 'error',
+                    title: "Please select a date first!",
+                    position: 'right top',
+                    effect: 'slide',
+                })
+                return false;
+            }
+            if ($('.timeSlot.selected').length === 0) {
+                new Notify({
+                    status: 'error',
+                    title: "Please select a time slot!",
+                    position: 'right top',
+                    effect: 'slide',
+                })
+                return false;
+            }
+        });
+    </script>
+}
