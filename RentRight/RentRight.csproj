@@ -20,6 +20,7 @@
     <Content Remove="Views\ManagerAvailabilities\Delete.cshtml" />
     <Content Remove="Views\ManagerAvailabilities\Details.cshtml" />
     <Content Remove="Views\ManagerAvailabilities\Edit.cshtml" />
+    <Content Remove="Views\Messages\Delete.cshtml" />
     <Content Remove="Views\Properties\Delete.cshtml" />
     <Content Remove="Views\Properties\Details.cshtml" />
     <Content Remove="Views\Rentals\Details.cshtml" />

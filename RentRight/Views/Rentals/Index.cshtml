@@ -19,7 +19,7 @@
                 Property
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Apartment)
+                @Html.DisplayNameFor(model => model.Apartment.Number)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Tenant)
@@ -40,7 +40,7 @@
                @item.Apartment.Property.Name
             </td>
             <td class="align-content-center">
-                @Html.DisplayFor(modelItem => item.Apartment.Id)
+                @Html.DisplayFor(modelItem => item.Apartment.Number)
             </td>
             <td class="align-content-center">
                 @item.Tenant.FirstName @item.Tenant.LastName

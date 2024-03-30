@@ -10,6 +10,8 @@ namespace RentRight.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        [DisplayName("Apartment Number")]
+        public int Number { get; set; }
         public int Bedrooms { get; set; }
         public int Bathrooms { get; set; }
         [DisplayName("Pets Allowed")]

@@ -34,7 +34,8 @@
                             <p class="fw-bold m-0">@item.Manager.FirstName @item.Manager.LastName </p>
                         }
                         <p class="m-0">Property @item.Apartment.Property.Name</p>
-                        
+                        <p class="m-0">Ap @item.Apartment.Number</p>
+
                         @if (item.Status == AppointmentStatus.Pending.ToString())
                         {
                             <p class="m-0" style="color:#6d85bc"><small>Waiting for confirmation</small></p>

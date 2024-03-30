@@ -26,6 +26,11 @@
                     <span asp-validation-for="PhotoFile" class="text-danger"></span>
                 </div>
             </div>
+            <div class="form-floating mt-3 col-12">
+                <input asp-for="Number" type="number" class="form-control" required placeholder="Number" />
+                <label asp-for="Number" class="control-label"></label>
+                <span asp-validation-for="Number" class="text-danger"></span>
+            </div>
             <div class="w-100 d-flex justify-content-between">
                 <div class="form-floating mt-3 col-5">
                     <input asp-for="Bedrooms" type="number" class="form-control" required placeholder="Bedrooms" />
