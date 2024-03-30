@@ -105,3 +105,7 @@ button {
     background-color: transparent;
     border: none;
 }
+
+.fixedHeightAp{
+    height: 200px;
+}

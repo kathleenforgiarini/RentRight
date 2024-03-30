@@ -23,9 +23,12 @@ namespace RentRight.Controllers
         }
 
         // GET: Rentals
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Index()
         {
             var rentRightContext = _context.Rental.Include(r => r.Apartment).Include(r => r.Tenant).Include(r => r.Apartment.Property);
+            ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
+            ViewBag.ErrorMessage = TempData["ErrorMessage"] as string;
             return View(await rentRightContext.ToListAsync());
         }
 
@@ -55,12 +58,14 @@ namespace RentRight.Controllers
                 }
                 _context.Add(rental);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Rental inserted!";
                 return RedirectToAction(nameof(Index));
             }
             List<User> tenants = await _context.User.Where(u => u.Type == TypeUsers.Tenant.ToString() && u.IsActive).ToListAsync();
             ViewBag.Tenants = tenants;
             List<Apartment> apartments = await _context.Apartment.Where(u => u.Status == ApartmentStatus.Rented.ToString()).ToListAsync();
             ViewBag.Apartments = apartments;
+            TempData["ErrorMessage"] = "Rental was not inserted. Try again!";
             return View(rental);
         }
 
@@ -102,6 +107,7 @@ namespace RentRight.Controllers
                 try
                 {
                     _context.Update(rental);
+                    TempData["SuccessMessage"] = "Rental updated!";
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -119,6 +125,7 @@ namespace RentRight.Controllers
             }
             ViewData["ApartmentId"] = new SelectList(_context.Apartment, "Id", "Id", rental.ApartmentId);
             ViewData["TenantId"] = new SelectList(_context.User, "Id", "Id", rental.TenantId);
+            TempData["ErrorMessage"] = "Rental was not updated. Try again!";
             return View(rental);
         }
 
@@ -154,6 +161,7 @@ namespace RentRight.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Rental deleted!";
             return RedirectToAction(nameof(Index));
         }
 

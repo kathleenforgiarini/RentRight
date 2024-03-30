@@ -20,6 +20,15 @@ a {
         color: #444444;
     }
 
+.apPrice {
+    color: #6d85bc;
+    font-weight: bold;
+}
+
+.card-body {
+    background-color: #DEE4EF;
+}
+
 .btnSave {
     border: none;
     border-radius: 5px;
@@ -101,4 +110,8 @@ a {
 }
 .Confirmed{
     color: darkgreen;
+}
+
+.fixedHeightAp {
+    height: 200px;
 }

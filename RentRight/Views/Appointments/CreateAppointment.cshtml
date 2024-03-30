@@ -10,30 +10,24 @@
 
 <link rel="stylesheet" href="~/css/appointments.css" asp-append-version="true" />
 
-<h1>Schedule a visit</h1>
+<h3>Schedule a visit</h3>
 
 <div class="row d-flex justify-content-center mt-5">
-    <div class="col-md-8">
-        <div class="mb-3">
-            <div class="row g-0 justify-content-center">
-                <div class="col-md-3">
-                    <img src="data:image;base64,@Convert.ToBase64String(apartment.Photo)" alt="Apartment Photo" class="img-fluid rounded-start">
+    <div class="col-md-6">
+        <div class="mb-3 d-flex align-items-center">
+            <img class="fixedHeightAp" src="data:image;base64,@Convert.ToBase64String(apartment.Photo)" alt="Apartment Photo">
+            <div class="card-body d-flex flex-column fixedHeightAp">
+                <div class="d-flex justify-content-between">
+                    <h5 class="card-title apPrice">$@apartment.RentPrice</h5>
+                    <p class="card-text"><small class="text-muted">@apartment.Size ft²</small></p>
                 </div>
-                <div class="col-md-5" style="background-color:#DEE4EF">
-                    <div class="card-body d-flex flex-column">
-                        <div class="d-flex justify-content-between">
-                            <h5 class="card-title apPrice">$@apartment.RentPrice</h5>
-                            <p class="card-text"><small class="text-muted">@apartment.Size ft²</small></p>
-                        </div>
-                        <p class="card-text fw-bold mb-1">@apartment.Bedrooms Bed</p>
-                        <p class="card-text fw-bold mb-1">@apartment.Bathrooms Bath</p>
-                        @if (apartment.Pets)
-                        {
-                            <p class="card-text fw-bold">Pet Friendly</p>
-                        }
-                        <p class="card-text"><small class="text-muted">@apartment.Property.StNumber, @apartment.Property.Street - @apartment.Property.City, QC</small></p>
-                    </div>
-                </div>
+                <p class="card-text fw-bold mb-1">@apartment.Bedrooms Bed</p>
+                <p class="card-text fw-bold mb-1">@apartment.Bathrooms Bath</p>
+                @if (apartment.Pets)
+                {
+                    <p class="card-text fw-bold">Pet Friendly</p>
+                }
+                <p class="card-text"><small class="text-muted">@apartment.Property.StNumber, @apartment.Property.Street - @apartment.Property.City, QC</small></p>
             </div>
         </div>
 
@@ -59,7 +53,7 @@
         <div class="form-group w-100">
             <form method="post" class="d-flex justify-content-center" asp-action="SendFirstMessage" asp-controller="Messages">
                 <input type="hidden" value="@apartment.Id" name="apartmentId" />
-                <input type="hidden" value="@apartment.Property.OwnerId" name="receiverId" />
+                <input type="hidden" value="@apartment.Property.ManagerId" name="receiverId" />
                 <button type="submit" class="btnMessage">
                     Contact the manager
                 </button>
