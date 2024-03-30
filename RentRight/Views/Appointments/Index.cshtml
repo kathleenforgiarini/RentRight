@@ -24,8 +24,15 @@
         <div class="col-8 px-0 d-flex flex-column mb-2">
             <div class="row appointmentCard">
                 <div class="d-flex justify-content-between">
-                    <div class="col-9 d-flex flex-column">
-                        <p class="fw-bold m-0">@item.Manager.FirstName @item.Manager.LastName </p>
+                    <div class="d-flex flex-column justify-content-between">
+                        @if (type == TypeUsers.Manager.ToString())
+                        {
+                            <p class="fw-bold m-0">@item.Tenant.FirstName @item.Tenant.LastName </p>
+                        }
+                        else
+                        {
+                            <p class="fw-bold m-0">@item.Manager.FirstName @item.Manager.LastName </p>
+                        }
                         <p class="m-0">Property @item.Apartment.Property.Name</p>
                         
                         @if (item.Status == AppointmentStatus.Pending.ToString())
@@ -38,7 +45,7 @@
                         }
 
                     </div>
-                    <div class="col-4 d-flex align-items-center">
+                    <div class="d-flex align-items-center" style="justify-content: flex-end;">
                         <div class="d-flex flex-column">
                             <p class="text-muted m-0"><small>@String.Format("{0:yyyy-MM-dd}", item.AppointmentDate)</small></p>
                             <p class="text-muted m-0 align-self-center"><small>@String.Format("{0:HH:mm}", item.AppointmentDate)</small></p>

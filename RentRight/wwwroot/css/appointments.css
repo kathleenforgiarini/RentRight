@@ -85,6 +85,7 @@ a {
     color: red;
     font-size: 28px;
     font-weight: bold;
+    justify-content: end;
 }
 
 .confirmAppointment {
