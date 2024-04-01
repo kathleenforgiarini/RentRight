@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,8 +29,19 @@ namespace RentRight.Controllers
         public async Task<IActionResult> Index(int propertyId)
         {
             var @property = await _context.Property.FirstOrDefaultAsync(u => u.Id == propertyId);
+
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userFound = await _context.User.FindAsync(userId);
+
             var rentRightContext = await _context.Apartment.Include(a => a.Property)
-                                                       .Where(a => a.PropertyId == propertyId).ToListAsync();
+                           .Where(a => a.PropertyId == propertyId).ToListAsync();
+
+            if (userFound.Type == TypeUsers.Tenant.ToString())
+            {
+                rentRightContext = await _context.Apartment.Include(a => a.Property)
+                           .Where(a => a.PropertyId == propertyId && a.Status == ApartmentStatus.Available.ToString())
+                           .ToListAsync();
+            }
 
             ViewBag.PropertyName = @property != null ? @property.Name : "Property not found";
             ViewBag.PropertyDescription = @property != null ? @property.Description : "Property not found";
