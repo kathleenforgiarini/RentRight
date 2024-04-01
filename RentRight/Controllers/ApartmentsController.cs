@@ -199,6 +199,15 @@ namespace RentRight.Controllers
             var rentRightContext = _context.Apartment.Include(a => a.Property)
                                                      .Where(a => a.PropertyId == propertyId);
 
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userFound = await _context.User.FindAsync(userId);
+
+            if (userFound.Type == TypeUsers.Tenant.ToString())
+            {
+                rentRightContext = _context.Apartment.Include(a => a.Property)
+                           .Where(a => a.PropertyId == propertyId && a.Status == ApartmentStatus.Available.ToString());
+            }
+
             switch (searchBy)
             {
                 case "all":
