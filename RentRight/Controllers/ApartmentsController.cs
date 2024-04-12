@@ -28,17 +28,17 @@ namespace RentRight.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Index(int propertyId)
         {
-            var @property = await _context.Property.FirstOrDefaultAsync(u => u.Id == propertyId);
+            var @property = await _context.Properties.FirstOrDefaultAsync(u => u.Id == propertyId);
 
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var userFound = await _context.User.FindAsync(userId);
+            var userFound = await _context.Users.FindAsync(userId);
 
-            var rentRightContext = await _context.Apartment.Include(a => a.Property)
+            var rentRightContext = await _context.Apartments.Include(a => a.Property)
                            .Where(a => a.PropertyId == propertyId).ToListAsync();
 
             if (userFound.Type == TypeUsers.Tenant.ToString())
             {
-                rentRightContext = await _context.Apartment.Include(a => a.Property)
+                rentRightContext = await _context.Apartments.Include(a => a.Property)
                            .Where(a => a.PropertyId == propertyId && a.Status == ApartmentStatus.Available.ToString())
                            .ToListAsync();
             }
@@ -79,7 +79,7 @@ namespace RentRight.Controllers
 
             if (ModelState.IsValid)
             {
-                var apartmentFound = await _context.Apartment.FirstOrDefaultAsync(u => u.Number == apartment.Number && u.PropertyId == apartment.PropertyId);
+                var apartmentFound = await _context.Apartments.FirstOrDefaultAsync(u => u.Number == apartment.Number && u.PropertyId == apartment.PropertyId);
                 if (apartmentFound != null)
                 {
                     TempData["ErrorMessage"] = "This apartment number already exists!";
@@ -105,12 +105,12 @@ namespace RentRight.Controllers
                 return NotFound();
             }
 
-            var apartment = await _context.Apartment.FindAsync(id);
+            var apartment = await _context.Apartments.FindAsync(id);
             if (apartment == null)
             {
                 return NotFound();
             }
-            ViewData["PropertyId"] = new SelectList(_context.Property, "Id", "Id", apartment.PropertyId);
+            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Id", apartment.PropertyId);
             return View(apartment);
         }
 
@@ -158,7 +158,7 @@ namespace RentRight.Controllers
                 TempData["SuccessMessage"] = "Apartment updated!";
                 return RedirectToAction("Index", new { propertyId = apartment.PropertyId });
             }
-            ViewData["PropertyId"] = new SelectList(_context.Property, "Id", "Id", apartment.PropertyId);
+            ViewData["PropertyId"] = new SelectList(_context.Properties, "Id", "Id", apartment.PropertyId);
             TempData["SuccessMessage"] = "Apartment was not updated. Try again!";
             return View(apartment);
         }
@@ -169,16 +169,16 @@ namespace RentRight.Controllers
         [Authorize(Policy = "RequireOwnerOrManagerRole")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var apartment = await _context.Apartment.FindAsync(id);
+            var apartment = await _context.Apartments.FindAsync(id);
             if (apartment != null)
             {
-                var rentalFound = await _context.Rental.FirstOrDefaultAsync(u => u.PropertyId == apartment.PropertyId && u.ApartmentNumber == apartment.Number);
+                var rentalFound = await _context.Rentals.FirstOrDefaultAsync(u => u.PropertyId == apartment.PropertyId && u.ApartmentNumber == apartment.Number);
                 if (rentalFound != null)
                 {
                     return StatusCode(500, "You canot delete this apartment, there is a rental related to it.");
                 }
 
-                _context.Apartment.Remove(apartment);
+                _context.Apartments.Remove(apartment);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Apartment deleted!";
                 return StatusCode(200, apartment.PropertyId);
@@ -189,22 +189,22 @@ namespace RentRight.Controllers
 
         private bool ApartmentExists(int id)
         {
-            return _context.Apartment.Any(e => e.Id == id);
+            return _context.Apartments.Any(e => e.Id == id);
         }
 
         public async Task<IActionResult> Search(string searchTerm, int propertyId, string searchBy, string searchFrom, string searchTo, string status)
         {
-            var @property = await _context.Property.FirstOrDefaultAsync(u => u.Id == propertyId);
+            var @property = await _context.Properties.FirstOrDefaultAsync(u => u.Id == propertyId);
 
-            var rentRightContext = _context.Apartment.Include(a => a.Property)
+            var rentRightContext = _context.Apartments.Include(a => a.Property)
                                                      .Where(a => a.PropertyId == propertyId);
 
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var userFound = await _context.User.FindAsync(userId);
+            var userFound = await _context.Users.FindAsync(userId);
 
             if (userFound.Type == TypeUsers.Tenant.ToString())
             {
-                rentRightContext = _context.Apartment.Include(a => a.Property)
+                rentRightContext = _context.Apartments.Include(a => a.Property)
                            .Where(a => a.PropertyId == propertyId && a.Status == ApartmentStatus.Available.ToString());
             }
 

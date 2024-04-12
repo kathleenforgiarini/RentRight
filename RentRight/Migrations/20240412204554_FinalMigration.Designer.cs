@@ -12,8 +12,8 @@ using RentRight.Data;
 namespace RentRight.Migrations
 {
     [DbContext(typeof(RentRightContext))]
-    [Migration("20240330171513_RedoingMigrations")]
-    partial class RedoingMigrations
+    [Migration("20240412204554_FinalMigration")]
+    partial class FinalMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -66,7 +66,7 @@ namespace RentRight.Migrations
 
                     b.HasIndex("PropertyId");
 
-                    b.ToTable("Apartment");
+                    b.ToTable("Apartments");
                 });
 
             modelBuilder.Entity("RentRight.Models.Appointments", b =>
@@ -126,7 +126,7 @@ namespace RentRight.Migrations
 
                     b.HasIndex("ManagerId");
 
-                    b.ToTable("ManagerAvailability");
+                    b.ToTable("ManagerAvailabilities");
                 });
 
             modelBuilder.Entity("RentRight.Models.Message", b =>
@@ -165,7 +165,7 @@ namespace RentRight.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Message");
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("RentRight.Models.Property", b =>
@@ -216,7 +216,7 @@ namespace RentRight.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Property");
+                    b.ToTable("Properties");
                 });
 
             modelBuilder.Entity("RentRight.Models.Rental", b =>
@@ -248,7 +248,7 @@ namespace RentRight.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Rental");
+                    b.ToTable("Rentals");
                 });
 
             modelBuilder.Entity("RentRight.Models.User", b =>
@@ -284,7 +284,7 @@ namespace RentRight.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
 
                     b.HasData(
                         new

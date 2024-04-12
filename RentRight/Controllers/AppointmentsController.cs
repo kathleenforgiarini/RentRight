@@ -38,7 +38,7 @@ namespace RentRight.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAppointment (int apartmentId, int managerId)
         {
-            var apartment = await _context.Apartment
+            var apartment = await _context.Apartments
                                 .Include(a => a.Property)
                                 .FirstOrDefaultAsync(a => a.Id == apartmentId);
             ViewBag.Apartment = apartment;
@@ -86,7 +86,7 @@ namespace RentRight.Controllers
             var dayOfWeek = appointment.AppointmentDate.DayOfWeek.ToString();
             var time = appointment.AppointmentDate.TimeOfDay;
 
-            var managerAvailabilities = _context.ManagerAvailability
+            var managerAvailabilities = _context.ManagerAvailabilities
                 .Where(av => av.ManagerId == appointment.ManagerId && av.DayOfTheWeek == dayOfWeek)
                 .ToList();
 
@@ -112,7 +112,7 @@ namespace RentRight.Controllers
             var dayOfWeek = appointment.AppointmentDate.DayOfWeek.ToString();
             var time = appointment.AppointmentDate.TimeOfDay;
 
-            var managerAvailabilities = _context.ManagerAvailability
+            var managerAvailabilities = _context.ManagerAvailabilities
                 .Where(av => av.ManagerId == appointment.ManagerId && av.DayOfTheWeek == dayOfWeek)
                 .ToList();
 
@@ -148,7 +148,7 @@ namespace RentRight.Controllers
             DayOfWeek enumDayOfWeek = selectedDate.DayOfWeek;
             string dayOfWeekString = enumDayOfWeek.ToString();
 
-            var availableTimes = _context.ManagerAvailability
+            var availableTimes = _context.ManagerAvailabilities
                 .Where(av => av.DayOfTheWeek == dayOfWeekString)
                 .Select(av => av.Time)
                 .ToList();

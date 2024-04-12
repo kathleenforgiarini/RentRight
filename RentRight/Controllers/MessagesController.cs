@@ -36,7 +36,7 @@ namespace RentRight.Controllers
 
             var userAuthId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            var rentRightContext = _context.Message
+            var rentRightContext = _context.Messages
                                 .Include(m => m.Apartment)
                                 .Include(m => m.Sender)
                                 .Include(m => m.Receiver)
@@ -45,22 +45,10 @@ namespace RentRight.Controllers
 
             var messages = await rentRightContext.ToListAsync();
 
-            var groupedMessages = messages.GroupBy(m => m.Topic)
+            var groupedMessages = messages.GroupBy(m => (m.ApartmentId, m.Topic))
                                   .Select(group => group.First());
 
-            return View(groupedMessages.GroupBy(m => m.Topic));
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SendFirstMessage(int apartmentId, int receiverId)
-        {
-            var apartment = await _context.Apartment.Include(p=>p.Property).FirstOrDefaultAsync(a => a.Id == apartmentId);
-            var user = await _context.User.FirstOrDefaultAsync(u => u.Id == receiverId);
-
-            ViewBag.Apartment = apartment;
-            ViewBag.User = user;
-
-            return View();
+            return View(groupedMessages.GroupBy(m => m.ApartmentId.ToString()));
         }
 
         [HttpPost]
@@ -78,15 +66,27 @@ namespace RentRight.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> SendFirstMessage(int apartmentId, int receiverId)
+        {
+            var apartment = await _context.Apartments.Include(p=>p.Property).FirstOrDefaultAsync(a => a.Id == apartmentId);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == receiverId);
+
+            ViewBag.Apartment = apartment;
+            ViewBag.User = user;
+
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public async Task<IActionResult> ViewMessage(string messageTopic)
+        public async Task<IActionResult> ViewMessage(string messageTopic, int apartmentId)
         {
             ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
 
             var userAuthId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            var message = await _context.Message.Include(p => p.Sender).Include(p => p.Receiver).Include(p => p.Apartment).Include(p => p.Apartment.Property)
-                .FirstOrDefaultAsync(p => p.Topic == messageTopic);
+            var message = await _context.Messages.Include(p => p.Sender).Include(p => p.Receiver).Include(p => p.Apartment).Include(p => p.Apartment.Property)
+                .FirstOrDefaultAsync(p => p.Topic == messageTopic && p.ApartmentId == apartmentId);
 
             if (message == null)
             {
@@ -96,7 +96,7 @@ namespace RentRight.Controllers
             {
                 return RedirectToAction("AccessDenied", "Account");
             }
-            List<Models.Message> messages = await _context.Message.Where(m=> m.Topic == message.Topic).OrderBy(m=>m.SendDate).ToListAsync();
+            List<Models.Message> messages = await _context.Messages.Where(m=> m.ApartmentId == message.ApartmentId && m.Topic == message.Topic).OrderBy(m=>m.SendDate).ToListAsync();
             ViewBag.Messages = messages;
             ViewBag.Apartment = message.Apartment;
             ViewBag.Topic = message.Topic;
@@ -123,7 +123,7 @@ namespace RentRight.Controllers
                 _context.Add(message);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Message sent!";
-                return RedirectToAction("ViewMessage", new { messageTopic = message.Topic});
+                return RedirectToAction("ViewMessage", new { messageTopic = message.Topic, apartmentId = message.ApartmentId});
             }
             catch (Exception ex)
             {                    

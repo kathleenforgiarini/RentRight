@@ -27,7 +27,7 @@ namespace RentRight.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Index()
         {
-            var rentRightContext = _context.ManagerAvailability.Include(m => m.Manager);
+            var rentRightContext = _context.ManagerAvailabilities.Include(m => m.Manager);
             ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
             ViewBag.ErrorMessage = TempData["ErrorMessage"] as string;
             return View(await rentRightContext.ToListAsync());
@@ -50,7 +50,7 @@ namespace RentRight.Controllers
 
             if (ModelState.IsValid)
             {
-                var availabilityFound = await _context.ManagerAvailability.FirstOrDefaultAsync(u => u.DayOfTheWeek == day && u.Time == timespan && u.ManagerId == userId);
+                var availabilityFound = await _context.ManagerAvailabilities.FirstOrDefaultAsync(u => u.DayOfTheWeek == day && u.Time == timespan && u.ManagerId == userId);
                 if (availabilityFound != null)
                 {
                     TempData["ErrorMessage"] = "This slot is already registered!";
@@ -62,7 +62,7 @@ namespace RentRight.Controllers
                 TempData["SuccessMessage"] = "Slot created!";
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ManagerId"] = new SelectList(_context.User, "Id", "Id", managerAvailability.ManagerId);
+            ViewData["ManagerId"] = new SelectList(_context.Users, "Id", "Id", managerAvailability.ManagerId);
             TempData["ErrorMessage"] = "Slot was not created. Try again!";
             return RedirectToAction(nameof(Index));
         }
@@ -71,10 +71,10 @@ namespace RentRight.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var managerAvailability = await _context.ManagerAvailability.FindAsync(id);
+            var managerAvailability = await _context.ManagerAvailabilities.FindAsync(id);
             if (managerAvailability != null)
             {
-                _context.ManagerAvailability.Remove(managerAvailability);
+                _context.ManagerAvailabilities.Remove(managerAvailability);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Slot deleted!";
                 return StatusCode(200);

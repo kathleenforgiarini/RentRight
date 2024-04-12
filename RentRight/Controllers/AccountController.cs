@@ -76,7 +76,7 @@ namespace RentRight.Controllers
                 return View("Login");
             }
 
-            var existingUser = await _context.User.FirstOrDefaultAsync(u => u.Email == user.Email);
+            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
             if (existingUser != null)
             {
                 ViewBag.ShowLoginForm = false;

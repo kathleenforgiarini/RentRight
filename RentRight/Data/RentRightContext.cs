@@ -15,12 +15,12 @@ namespace RentRight.Data
         {
         }
 
-        public DbSet<RentRight.Models.User> User { get; set; } = default!;
-        public DbSet<RentRight.Models.Property> Property { get; set; } = default!;
-        public DbSet<RentRight.Models.Apartment> Apartment { get; set; } = default!;
-        public DbSet<RentRight.Models.Message> Message { get; set; } = default!;
-        public DbSet<RentRight.Models.Rental> Rental { get; set; } = default!;
-        public DbSet<RentRight.Models.ManagerAvailability> ManagerAvailability { get; set; } = default!;
+        public DbSet<RentRight.Models.User> Users { get; set; } = default!;
+        public DbSet<RentRight.Models.Property> Properties { get; set; } = default!;
+        public DbSet<RentRight.Models.Apartment> Apartments { get; set; } = default!;
+        public DbSet<RentRight.Models.Message> Messages { get; set; } = default!;
+        public DbSet<RentRight.Models.Rental> Rentals { get; set; } = default!;
+        public DbSet<RentRight.Models.ManagerAvailability> ManagerAvailabilities { get; set; } = default!;
         public DbSet<RentRight.Models.Appointments> Appointments { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

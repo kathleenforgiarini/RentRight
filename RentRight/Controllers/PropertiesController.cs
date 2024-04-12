@@ -24,8 +24,8 @@ namespace RentRight.Controllers
         public PropertiesController(RentRightContext context)
         {
             _context = context;
-            this.owners = _context.User.Where(u => u.Type == TypeUsers.Owner.ToString() && u.IsActive).ToList();
-            this.managers = _context.User.Where(u => u.Type == TypeUsers.Manager.ToString() && u.IsActive).ToList();
+            this.owners = _context.Users.Where(u => u.Type == TypeUsers.Owner.ToString() && u.IsActive).ToList();
+            this.managers = _context.Users.Where(u => u.Type == TypeUsers.Manager.ToString() && u.IsActive).ToList();
 
         }
 
@@ -35,7 +35,7 @@ namespace RentRight.Controllers
         {
             ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
             ViewBag.ErrorMessage = TempData["ErrorMessage"] as string;
-            return View(await _context.Property.ToListAsync());
+            return View(await _context.Properties.ToListAsync());
         }
 
         // GET: Properties/Create
@@ -89,7 +89,7 @@ namespace RentRight.Controllers
                 return NotFound();
             }
 
-            var @property = await _context.Property.FindAsync(id);
+            var @property = await _context.Properties.FindAsync(id);
             if (@property == null)
             {
                 return NotFound();
@@ -158,17 +158,17 @@ namespace RentRight.Controllers
         [Authorize(Policy = "RequireOwnerOrManagerRole")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var @property = await _context.Property.FindAsync(id);
+            var @property = await _context.Properties.FindAsync(id);
             if (@property != null)
             {
-                var apartments = await _context.Apartment.Where(a => a.PropertyId == id).ToListAsync();
+                var apartments = await _context.Apartments.Where(a => a.PropertyId == id).ToListAsync();
                 if (apartments.Count > 0)
                 {
                     return StatusCode(500, "You canot delete this property, there are apartments related to it.");
                 }
                 try
                 {
-                    _context.Property.Remove(@property);
+                    _context.Properties.Remove(@property);
                     await _context.SaveChangesAsync();
                     TempData["SuccessMessage"] = "Property deleted!";
                     return StatusCode(200);
@@ -184,12 +184,12 @@ namespace RentRight.Controllers
 
         private bool PropertyExists(int id)
         {
-            return _context.Property.Any(e => e.Id == id);
+            return _context.Properties.Any(e => e.Id == id);
         }
 
         public IActionResult Search(string searchTerm)
         {
-            var properties = _context.Property.AsQueryable();
+            var properties = _context.Properties.AsQueryable();
 
             if (!string.IsNullOrEmpty(searchTerm))
             {

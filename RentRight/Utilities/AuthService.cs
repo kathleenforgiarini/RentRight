@@ -16,7 +16,7 @@ namespace RentRight.Utilities
 
         public async Task<bool> AuthenticateUserAsync(string email, string password, HttpContext httpContext)
         {
-            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == email && u.Password == password && u.IsActive);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password && u.IsActive);
             if (user != null)
             {
                 var claims = new List<Claim>

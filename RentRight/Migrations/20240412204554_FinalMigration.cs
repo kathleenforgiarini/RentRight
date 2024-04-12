@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RentRight.Migrations
 {
     /// <inheritdoc />
-    public partial class RedoingMigrations : Migration
+    public partial class FinalMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "User",
+                name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -26,11 +26,11 @@ namespace RentRight.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ManagerAvailability",
+                name: "ManagerAvailabilities",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -41,17 +41,17 @@ namespace RentRight.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ManagerAvailability", x => x.Id);
+                    table.PrimaryKey("PK_ManagerAvailabilities", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ManagerAvailability_User_ManagerId",
+                        name: "FK_ManagerAvailabilities_Users_ManagerId",
                         column: x => x.ManagerId,
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Property",
+                name: "Properties",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -68,23 +68,23 @@ namespace RentRight.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Property", x => x.Id);
+                    table.PrimaryKey("PK_Properties", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Property_User_ManagerId",
+                        name: "FK_Properties_Users_ManagerId",
                         column: x => x.ManagerId,
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Property_User_OwnerId",
+                        name: "FK_Properties_Users_OwnerId",
                         column: x => x.OwnerId,
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Apartment",
+                name: "Apartments",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -101,17 +101,17 @@ namespace RentRight.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Apartment", x => x.Id);
+                    table.PrimaryKey("PK_Apartments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Apartment_Property_PropertyId",
+                        name: "FK_Apartments_Properties_PropertyId",
                         column: x => x.PropertyId,
-                        principalTable: "Property",
+                        principalTable: "Properties",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Rental",
+                name: "Rentals",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -124,17 +124,17 @@ namespace RentRight.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Rental", x => x.Id);
+                    table.PrimaryKey("PK_Rentals", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Rental_Property_PropertyId",
+                        name: "FK_Rentals_Properties_PropertyId",
                         column: x => x.PropertyId,
-                        principalTable: "Property",
+                        principalTable: "Properties",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Rental_User_TenantId",
+                        name: "FK_Rentals_Users_TenantId",
                         column: x => x.TenantId,
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -155,27 +155,27 @@ namespace RentRight.Migrations
                 {
                     table.PrimaryKey("PK_Appointments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Appointments_Apartment_ApartmentId",
+                        name: "FK_Appointments_Apartments_ApartmentId",
                         column: x => x.ApartmentId,
-                        principalTable: "Apartment",
+                        principalTable: "Apartments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Appointments_User_ManagerId",
+                        name: "FK_Appointments_Users_ManagerId",
                         column: x => x.ManagerId,
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
-                        name: "FK_Appointments_User_TenantId",
+                        name: "FK_Appointments_Users_TenantId",
                         column: x => x.TenantId,
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Message",
+                name: "Messages",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -189,35 +189,35 @@ namespace RentRight.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Message", x => x.Id);
+                    table.PrimaryKey("PK_Messages", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Message_Apartment_ApartmentId",
+                        name: "FK_Messages_Apartments_ApartmentId",
                         column: x => x.ApartmentId,
-                        principalTable: "Apartment",
+                        principalTable: "Apartments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Message_User_ReceiverId",
+                        name: "FK_Messages_Users_ReceiverId",
                         column: x => x.ReceiverId,
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Message_User_SenderId",
+                        name: "FK_Messages_Users_SenderId",
                         column: x => x.SenderId,
-                        principalTable: "User",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.InsertData(
-                table: "User",
+                table: "Users",
                 columns: new[] { "Id", "Email", "FirstName", "IsActive", "LastName", "Password", "Type" },
                 values: new object[] { 1, "owner@owner.com", "Owner", true, "Owner", "1234", "Owner" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Apartment_PropertyId",
-                table: "Apartment",
+                name: "IX_Apartments_PropertyId",
+                table: "Apartments",
                 column: "PropertyId");
 
             migrationBuilder.CreateIndex(
@@ -236,43 +236,43 @@ namespace RentRight.Migrations
                 column: "TenantId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ManagerAvailability_ManagerId",
-                table: "ManagerAvailability",
+                name: "IX_ManagerAvailabilities_ManagerId",
+                table: "ManagerAvailabilities",
                 column: "ManagerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Message_ApartmentId",
-                table: "Message",
+                name: "IX_Messages_ApartmentId",
+                table: "Messages",
                 column: "ApartmentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Message_ReceiverId",
-                table: "Message",
+                name: "IX_Messages_ReceiverId",
+                table: "Messages",
                 column: "ReceiverId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Message_SenderId",
-                table: "Message",
+                name: "IX_Messages_SenderId",
+                table: "Messages",
                 column: "SenderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Property_ManagerId",
-                table: "Property",
+                name: "IX_Properties_ManagerId",
+                table: "Properties",
                 column: "ManagerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Property_OwnerId",
-                table: "Property",
+                name: "IX_Properties_OwnerId",
+                table: "Properties",
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Rental_PropertyId",
-                table: "Rental",
+                name: "IX_Rentals_PropertyId",
+                table: "Rentals",
                 column: "PropertyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Rental_TenantId",
-                table: "Rental",
+                name: "IX_Rentals_TenantId",
+                table: "Rentals",
                 column: "TenantId");
         }
 
@@ -283,22 +283,22 @@ namespace RentRight.Migrations
                 name: "Appointments");
 
             migrationBuilder.DropTable(
-                name: "ManagerAvailability");
+                name: "ManagerAvailabilities");
 
             migrationBuilder.DropTable(
-                name: "Message");
+                name: "Messages");
 
             migrationBuilder.DropTable(
-                name: "Rental");
+                name: "Rentals");
 
             migrationBuilder.DropTable(
-                name: "Apartment");
+                name: "Apartments");
 
             migrationBuilder.DropTable(
-                name: "Property");
+                name: "Properties");
 
             migrationBuilder.DropTable(
-                name: "User");
+                name: "Users");
         }
     }
 }

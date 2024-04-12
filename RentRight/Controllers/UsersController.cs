@@ -30,7 +30,7 @@ namespace RentRight.Controllers
         {
             ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
             ViewBag.ErrorMessage = TempData["ErrorMessage"] as string;
-            return View(await _context.User.ToListAsync());
+            return View(await _context.Users.ToListAsync());
         }
 
         // GET: Users/Create
@@ -50,7 +50,7 @@ namespace RentRight.Controllers
         {
             if (ModelState.IsValid)
             {
-                var existingUser = await _context.User.FirstOrDefaultAsync(u => u.Email == user.Email);
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
                 if (existingUser != null)
                 {
                     TempData["ErrorMessage"] = "This e-mail already exists!";
@@ -74,14 +74,14 @@ namespace RentRight.Controllers
             }
 
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var userFound = await _context.User.FindAsync(userId);
+            var userFound = await _context.Users.FindAsync(userId);
             if (userFound.Type != TypeUsers.Owner.ToString() && userId != id)
             {
                 return RedirectToAction("AccessDenied", "Account");
 
             }
 
-            var user = await _context.User.FindAsync(id);
+            var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
                 return NotFound();
@@ -105,11 +105,11 @@ namespace RentRight.Controllers
             {
                 try
                 {
-                    var existingUser = await _context.User.FindAsync(id);
+                    var existingUser = await _context.Users.FindAsync(id);
                     if (existingUser.Email != user.Email)
                     {
                         // Verifica se o novo email já existe no banco de dados
-                        var emailExists = await _context.User.AnyAsync(u => u.Email == user.Email);
+                        var emailExists = await _context.Users.AnyAsync(u => u.Email == user.Email);
                         if (emailExists)
                         {
                             if (existingUser.Type != "Owner")
@@ -147,7 +147,7 @@ namespace RentRight.Controllers
                 }
 
                 var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var userFound = await _context.User.FindAsync(userId);
+                var userFound = await _context.Users.FindAsync(userId);
                 if (userFound.Type == TypeUsers.Owner.ToString())
                 {
                     TempData["SuccessMessage"] = "User updated!";
@@ -170,13 +170,13 @@ namespace RentRight.Controllers
                 return NotFound();
             }
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var userFound = await _context.User.FindAsync(userId);
+            var userFound = await _context.Users.FindAsync(userId);
             if (userFound.Type != TypeUsers.Owner.ToString() && userId != id)
             {
                 return RedirectToAction("AccessDenied", "Account");
             }
 
-            var user = await _context.User
+            var user = await _context.Users
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (user == null)
             {
@@ -191,12 +191,12 @@ namespace RentRight.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var user = await _context.User.FindAsync(id);
+            var user = await _context.Users.FindAsync(id);
             if (user != null)
             {
                 try
                 {
-                    _context.User.Remove(user);
+                    _context.Users.Remove(user);
                     await _context.SaveChangesAsync();
                     var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
                     if (userId == id)
@@ -217,12 +217,12 @@ namespace RentRight.Controllers
 
         private bool UserExists(int id)
         {
-            return _context.User.Any(e => e.Id == id);
+            return _context.Users.Any(e => e.Id == id);
         }
 
         public IActionResult Search(string searchTerm)
         {
-            var users = _context.User.AsQueryable();
+            var users = _context.Users.AsQueryable();
 
             if (!string.IsNullOrEmpty(searchTerm))
             {
@@ -235,15 +235,15 @@ namespace RentRight.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteProfile(int id)
         {
-            var user = await _context.User.FindAsync(id);
+            var user = await _context.Users.FindAsync(id);
             if (user != null)
             {
-                var properties = await _context.Property.Where(p => p.ManagerId == id).ToListAsync();
+                var properties = await _context.Properties.Where(p => p.ManagerId == id).ToListAsync();
                 if (properties.Count > 0)
                 {
                     return StatusCode(500, "You can not delete your profile, you have properties related with your account!");
                 }
-                _context.User.Remove(user);
+                _context.Users.Remove(user);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Account deleted!";
                 return StatusCode(200);
